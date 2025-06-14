@@ -1,1 +1,1 @@
-INSERT INTO hello (message) VALUES ('Hello world!')
+INSERT INTO hello (message) VALUES ('Hello World!')
