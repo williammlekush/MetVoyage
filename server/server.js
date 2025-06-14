@@ -1,40 +1,30 @@
-// server/server.js
 import express from "express";
-import mysql from "mysql2";
 import cors from "cors";
 import dotenv from "dotenv";
+import { createDb, runQueryFromFile } from "./query.js";
 
 dotenv.config();
 
-const app = express();
-const port = process.env.PORT || 5000;
+// Create the database if it doesn't exist.
+createDb();
 
-app.use(cors());
-app.use(express.json());
+// Example table creation.
+runQueryFromFile({ queryName: "CreateHello" });
 
-// Database configuration
+// Example data insertion. TODO: Move to API reply to button.
+runQueryFromFile({ queryName: "InsertHello" });
 
-// Test the database connection
-async function testConnection() {
-  try {
-    console.log("Connection has been established successfully.");
-  } catch (error) {
-    console.error("Unable to connect to the database:", error);
-  }
-}
-testConnection();
-
-// Example route
-app.get("/api/data", async (req, res) => {
-  try {
-    const [results] = await sequelize.query("SELECT * FROM your_table");
-    res.json(results);
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    res.status(500).send("Internal Server Error");
-  }
+// Example data retrieval. TODO: Move to API reply to button.
+runQueryFromFile({
+  queryName: "ReadHello",
+  resultCallback: (result) => console.log(result),
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+const APP = express();
+APP.use(cors());
+APP.use(express.json());
+
+const PORT = process.env.PORT || 5000;
+APP.listen(PORT, () =>
+  console.log(`Server running at http://localhost:${PORT}`)
+);
