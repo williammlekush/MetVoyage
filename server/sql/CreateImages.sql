@@ -1,8 +1,7 @@
 # Images of gallery objects
 CREATE TABLE IF NOT EXISTS Images (
-   id INT PRIMARY KEY
-   ,url NVARCHAR(2000)
+   url NVARCHAR(180) PRIMARY KEY
    ,object_id INT NOT NULL REFERENCES Objects(id)
-   ,public_caption NVARCHAR(255) NULL
-   ,caption NVARCHAR(255) NULL
+   ,public_caption NVARCHAR(1080) NULL
+   ,caption NVARCHAR(70) NULL
 );

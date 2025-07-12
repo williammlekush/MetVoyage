@@ -2,41 +2,41 @@
 CREATE TABLE IF NOT EXISTS Objects (
    # Identiy
    id INT PRIMARY KEY
-   ,number VARCHAR(255) NOT NULL UNIQUE
-   ,name NVARCHAR(255) NULL
-   ,title NVARCHAR(255) NULL
-   ,link_resource NVARCHAR(2000)
+   ,number VARCHAR(50) NOT NULL UNIQUE
+   ,name NVARCHAR(80) NULL
+   ,title NVARCHAR(830) NULL
+   ,link_resource NVARCHAR(60) UNIQUE
    ,is_highlight BOOLEAN NOT NULL
    # Ethnography
-   ,culture NVARCHAR(255) NOT NULL
-   ,period NVARCHAR(255) NULL
-   ,dynasty NVARCHAR(255) NULL
-   ,reign NVARCHAR(255) NULL
-   ,date NVARCHAR(255) NULL
+   ,culture NVARCHAR(70) NOT NULL
+   ,period NVARCHAR(80) NULL
+   ,dynasty NVARCHAR(50) NULL
+   ,reign NVARCHAR(60) NULL
+   ,date NVARCHAR(110) NULL
    ,begin_date INT NOT NULL
    ,end_date INT NOT NULL
    # Artist
-   ,artist_role NVARCHAR(255) NULL
-   ,artist_prefix NVARCHAR(255) NULL
-   ,credit_line NVARCHAR(255) NULL
+   ,artist_role NVARCHAR(330) NULL
+   ,artist_prefix NVARCHAR(460) NULL
+   ,credit_line NVARCHAR(620) NULL
    # Geography
-   ,geography_type NVARCHAR(255) NULL
-   ,city NVARCHAR(255) NULL
-   ,state NVARCHAR(255) NULL
-   ,county NVARCHAR(255) NULL
-   ,country NVARCHAR(255) NULL
-   ,region NVARCHAR(255) NULL 
-   ,subregion NVARCHAR(255) NULL
-   ,locale NVARCHAR(255) NULL
-   ,locus NVARCHAR(255) NULL
-   ,excavation NVARCHAR(255) NULL
-   ,river NVARCHAR(255) NULL
+   ,geography_type NVARCHAR(80) NULL
+   ,city NVARCHAR(50) NULL
+   ,state NVARCHAR(50) NULL
+   ,county NVARCHAR(40) NULL
+   ,country NVARCHAR(70) NULL
+   ,region NVARCHAR(50) NULL 
+   ,subregion NVARCHAR(50) NULL
+   ,locale NVARCHAR(70) NULL
+   ,locus NVARCHAR(50) NULL
+   ,excavation NVARCHAR(100) NULL
+   ,river NVARCHAR(30) NULL
    # Measurement
-   ,classification NVARCHAR(255) NULL
-   ,medium NVARCHAR(255) NULL
-   ,dimensions NVARCHAR(255) NULL
+   ,classification NVARCHAR(80) NULL
+   ,medium NVARCHAR(8200) NULL
+   ,dimensions NVARCHAR(1900) NULL
    # Residence
-   ,rights_and_reproductions NVARCHAR(255) NULL
-   ,department NVARCHAR(255) NULL
-   ,portfolio NVARCHAR(255) NOT NULL
+   ,rights_and_reproductions NVARCHAR(160) NULL
+   ,department NVARCHAR(50) NULL
+   ,portfolio NVARCHAR(430) NOT NULL
 );
