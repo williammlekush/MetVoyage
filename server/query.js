@@ -4,12 +4,16 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+//#region db connection
 export const DB = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
 });
 
+//#endregion
+
+//#region query helpers
 export const query = ({ query, resultCallback }) => {
   DB.query(query, (error, result) => {
     if (error) {
@@ -19,15 +23,6 @@ export const query = ({ query, resultCallback }) => {
     resultCallback && resultCallback(result);
   });
 };
-
-export const createDb = () =>
-  DB.connect((connectError) => {
-    if (connectError) {
-      console.error("Error connecting to the database:", connectError);
-      return;
-    }
-    query({ query: `CREATE DATABASE IF NOT EXISTS ${process.env.DB_NAME}` });
-  });
 
 const queryDB = (queryCallback) => {
   query({ query: `USE ${process.env.DB_NAME}` });
@@ -42,4 +37,38 @@ export const runQueryFromFile = ({ queryName, resultCallback }) => {
     }
     queryDB(() => query({ query: sql, resultCallback }));
   });
+};
+//#endregion
+
+//#region queries
+
+// These are roughy ordered according to dependencies.
+const tables = [
+  "Objects",
+  "Images",
+  "Users",
+  "Itineraries",
+  "Includes",
+  "CanView",
+  "Artists",
+  "Created",
+];
+
+export const createDb = () =>
+  DB.connect((connectError) => {
+    if (connectError) {
+      console.error("Error connecting to the database:", connectError);
+      return;
+    }
+    query({ query: `CREATE DATABASE IF NOT EXISTS ${process.env.DB_NAME}` });
+  });
+
+export const createTables = () => {
+  tables.forEach((table) => runQueryFromFile({ queryName: `Create${table}` }));
+};
+
+export const dropTables = () => {
+  tables.forEach((table) =>
+    queryDB(() => query({ query: "DROP TABLE IF EXISTS " + table }))
+  );
 };
