@@ -38,6 +38,12 @@ export const runQueryFromFile = ({ queryName, resultCallback }) => {
     queryDB(() => query({ query: sql, resultCallback }));
   });
 };
+
+const insertObjects = (table = "", columns = [], objects = []) => {
+  const sql = `INSERT INTO ${table} (${columns.join(", ")}) VALUES ?`;
+  queryDB(() => qu}))
+};
+
 //#endregion
 
 //#region queries
