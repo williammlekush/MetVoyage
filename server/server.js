@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import HELLO from "./routes/hello.js";
-import { buildDb } from "./query.js";
+import { buildDb, connect } from "./query.js";
 
 dotenv.config();
 
