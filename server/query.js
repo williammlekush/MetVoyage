@@ -104,10 +104,15 @@ const createTables = () =>
     runQueryFromFile({ queryName: `Create${table}` })
   );
 
-const dropTables = () =>
+const dropTables = () => {
+  // Disable foreign key checks to delete all tables
+  queryDb(() => query({ query: "SET FOREIGN_KEY_CHECKS = 0" }));
   Object.values(Table).forEach((table) =>
     queryDb(() => query({ query: "DROP TABLE IF EXISTS " + table }))
   );
+  // Re-enable foreign key checks
+  queryDb(() => query({ query: "SET FOREIGN_KEY_CHECKS = 1" }));
+};
 
 const insertMetData = async () => {
   console.log("Step 1/5: Parsing object data into objects and artists...");
