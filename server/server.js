@@ -2,19 +2,13 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import HELLO from "./routes/hello.js";
-import { createDb, createTables, dropTables } from "./query.js";
+import { buildDb } from "./query.js";
 
 dotenv.config();
 
-// Create the database if it doesn't exist.
-createDb();
+connect();
 
-// Build tables from scratch
-dropTables();
-createTables();
-
-// // Example data insertion.
-// runQueryFromFile({ queryName: "InsertHello" });
+buildDb(); // Note: Comment out to avoid re-building every time
 
 // // Example data retrieval.
 // runQueryFromFile({

@@ -2,7 +2,7 @@
 CREATE TABLE IF NOT EXISTS Objects (
    # Identiy
    id INT PRIMARY KEY
-   ,number VARCHAR(50) NOT NULL UNIQUE
+   ,number VARCHAR(50) NOT NULL
    ,name NVARCHAR(80) NULL
    ,title NVARCHAR(830) NULL
    ,link_resource NVARCHAR(60) UNIQUE
