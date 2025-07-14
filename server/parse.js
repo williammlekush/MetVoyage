@@ -64,6 +64,32 @@ const mapRow = (map, row) => {
 
   return mapped;
 };
+
+const mapRowNonAtomic = (map, row) => {
+  const mappedRows = [];
+  const splitRow = {};
+
+  for (const [rowKey, value] of Object.entries(row)) {
+    splitRow[rowKey] = String(value).includes("|")
+      ? String(value).split("|")
+      : [value];
+  }
+
+  // Iterate over the split values and map each one
+  const rowCount = Math.max(...Object.values(splitRow).map((arr) => arr.length));
+
+  for (let i = 0; i < rowCount; i++) {
+    const mapped = {};
+    for (const [rowKey, key] of Object.entries(map)) {
+      mapped[key] = splitRow[rowKey] && splitRow[rowKey][i] !== undefined 
+        ? splitRow[rowKey][i] 
+        : null; // Handle undefined or missing values
+    }
+    mappedRows.push(mapped);
+  }
+
+  return mappedRows;
+}
 //#endregion
 
 //#region parsers
@@ -76,7 +102,7 @@ export const parseMetObjects = () =>
       .on("data", (row) => {
         row.is_highlight = row.is_highlight === "true" ? 1 : 0;
         objects.push(mapRow(objectMap, row));
-        artists.push(mapRow(artistMap, row));
+        artists.push(...mapRowNonAtomic(artistMap, row));
       })
       .on("end", () => resolve({ objects, artists }))
       .on("error", (err) => reject(err));
