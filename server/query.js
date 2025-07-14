@@ -3,6 +3,7 @@ import mysql from "mysql2";
 import dotenv from "dotenv";
 import {
   artistMap,
+  createdMap,
   imagesMap,
   objectMap,
   parseMetImages,
@@ -115,28 +116,35 @@ const dropTables = () => {
 };
 
 const insertMetData = async () => {
-  console.log("Step 1/5: Parsing object data into objects and artists...");
-  const { objects, artists } = await parseMetObjects();
-  // iterate over each batch of 100 objec and insert them
+  console.log("Step 1/6: Parsing object data into objects and artists...");
+  const { objects, artists, created } = await parseMetObjects();
+  // iterate over each batch of 100 objects and insert them
 
-  console.log("Step 2/5: Inserting objects into dbo.MetVoyage.Objects...");
+  console.log("Step 2/6: Inserting objects into dbo.MetVoyage.Objects...");
   await insertObjectsInBatches(
     Table.OBJECTS,
     Object.values(objectMap),
     objects
   );
 
-  console.log("Step 3/5: Inserting artists into dbo.MetVoyage.Artists...");
+  console.log("Step 3/6: Inserting artists into dbo.MetVoyage.Artists...");
   await insertObjectsInBatches(
     Table.ARTISTS,
     Object.values(artistMap),
     artists
   );
 
-  console.log("Step 4/5: Parsing image data into images...");
+  console.log("Step 4/6: Inserting created data into dbo.MetVoyage.Created...");
+  await insertObjectsInBatches(
+    Table.CREATED,
+    Object.values({ artist_id: "artist_id", ...createdMap }),
+    created
+  );
+
+  console.log("Step 5/6: Parsing image data into images...");
   const images = await parseMetImages();
 
-  console.log("Step 5/5: Inserting images into dbo.MetVoyage.Images...");
+  console.log("Step 6/6: Inserting images into dbo.MetVoyage.Images...");
   await insertObjectsInBatches(Table.IMAGES, Object.values(imagesMap), images);
 };
 

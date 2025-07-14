@@ -16,8 +16,6 @@ export const objectMap = {
   object_date: "date",
   object_begin_date: "begin_date",
   object_end_date: "end_date",
-  artist_role: "artist_role",
-  artist_prefix: "artist_prefix",
   credit_line: "credit_line",
   geography_type: "geography_type",
   city: "city",
@@ -46,6 +44,12 @@ export const artistMap = {
   artist_end_date: "end_date",
 };
 
+export const createdMap = {
+  artist_role: "artist_role",
+  artist_prefix: "artist_prefix",
+  object_id: "object_id",
+};
+
 export const imagesMap = {
   original_image_url: "url",
   object_id: "object_id",
@@ -65,30 +69,18 @@ const mapRow = (map, row) => {
   return mapped;
 };
 
-const mapRowNonAtomic = (map, row) => {
-  const mappedRows = [];
-  const splitRow = {};
+const mapSplitRow = (splitRow, map, index) => {
+  return Object.fromEntries(
+    Object.entries(map).map(([rowKey, key])=> [key, getSplitValue(splitRow, rowKey, index)])
+  );
+}
 
-  for (const [rowKey, value] of Object.entries(row)) {
-    splitRow[rowKey] = String(value).includes("|")
-      ? String(value).split("|")
-      : [value];
-  }
-
-  // Iterate over the split values and map each one
-  const rowCount = Math.max(...Object.values(splitRow).map((arr) => arr.length));
-
-  for (let i = 0; i < rowCount; i++) {
-    const mapped = {};
-    for (const [rowKey, key] of Object.entries(map)) {
-      mapped[key] = splitRow[rowKey] && splitRow[rowKey][i] !== undefined 
-        ? splitRow[rowKey][i] 
-        : null; // Handle undefined or missing values
-    }
-    mappedRows.push(mapped);
-  }
-
-  return mappedRows;
+const getSplitValue = (splitRow, rowKey, index) => {
+  return splitRow[rowKey] && splitRow[rowKey][index] !== undefined
+    ? splitRow[rowKey][index]
+    : splitRow[rowKey] && splitRow[rowKey][0] !== undefined
+      ? splitRow[rowKey][0]
+      : "";
 }
 //#endregion
 
@@ -97,14 +89,45 @@ export const parseMetObjects = () =>
   new Promise((resolve, reject) => {
     const objects = [];
     const artists = [];
+    const createdArray = [];
+
+    const artistDictionary = new Map(); //used for deduplication
+    let artistIdCounter = 1;
+
     fs.createReadStream("../raw_data/met_objects.csv")
       .pipe(csv())
       .on("data", (row) => {
         row.is_highlight = row.is_highlight === "true" ? 1 : 0;
         objects.push(mapRow(objectMap, row));
-        artists.push(...mapRowNonAtomic(artistMap, row));
+
+        const splitRow = {};
+
+        for (const [rowKey, value] of Object.entries(row)) {
+          splitRow[rowKey] = String(value).includes("|")
+            ? String(value).split("|")
+            : [value];
+        }
+        
+        // Iterate over the split values and map each one
+        const rowCount = Math.max(...Object.values(splitRow).map((arr) => arr.length));
+
+        for (let i = 0; i < rowCount; i++) {
+          const artist = mapSplitRow(splitRow, artistMap, i);
+          let artistId = 0;
+
+          const artistKey = JSON.stringify(artist);
+          if (!artistDictionary.has(artistKey)) {
+            artistDictionary.set(artistKey, artistIdCounter);
+            artistIdCounter++;
+            artists.push(artist);
+          }
+          artistId = artistDictionary.get(artistKey);
+
+          const created = mapSplitRow(splitRow, createdMap, i);
+          createdArray.push({artist_id: artistId, ...created});
+        }
       })
-      .on("end", () => resolve({ objects, artists }))
+      .on("end", () => resolve({ objects, artists, created: createdArray }))
       .on("error", (err) => reject(err));
   });
 

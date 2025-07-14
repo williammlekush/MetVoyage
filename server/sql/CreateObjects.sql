@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS Objects (
    ,title NVARCHAR(830) NULL
    ,link_resource NVARCHAR(60) UNIQUE
    ,is_highlight BOOLEAN NOT NULL
+   ,credit_line NVARCHAR(620) NULL
    # Ethnography
    ,culture NVARCHAR(70) NOT NULL
    ,period NVARCHAR(80) NULL
@@ -15,10 +16,6 @@ CREATE TABLE IF NOT EXISTS Objects (
    ,date NVARCHAR(110) NULL
    ,begin_date INT NOT NULL
    ,end_date INT NOT NULL
-   # Artist
-   ,artist_role NVARCHAR(330) NULL
-   ,artist_prefix NVARCHAR(460) NULL
-   ,credit_line NVARCHAR(620) NULL
    # Geography
    ,geography_type NVARCHAR(80) NULL
    ,city NVARCHAR(50) NULL
