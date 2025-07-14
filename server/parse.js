@@ -124,7 +124,10 @@ export const parseMetObjects = () =>
           artistId = artistDictionary.get(artistKey);
 
           const created = mapSplitRow(splitRow, createdMap, i);
-          createdArray.push({artist_id: artistId, ...created});
+          //Don't trust the csv to not have duplicates
+          if (!createdArray.some((c) => c.artist_id === artistId && c.object_id === created.object_id)) {
+            createdArray.push({artist_id: artistId, ...created});
+          }
         }
       })
       .on("end", () => resolve({ objects, artists, created: createdArray }))
