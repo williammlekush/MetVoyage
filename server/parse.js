@@ -76,11 +76,11 @@ const mapSplitRow = (splitRow, map, index) => {
 }
 
 const getSplitValue = (splitRow, rowKey, index) => {
-  return splitRow[rowKey] && splitRow[rowKey][index] !== undefined
-    ? splitRow[rowKey][index]
-    : splitRow[rowKey] && splitRow[rowKey][0] !== undefined
-      ? splitRow[rowKey][0]
-      : "";
+  return splitRow[rowKey] && splitRow[rowKey].length === 1
+    ? splitRow[rowKey][0] // Return the single value if only one index exists
+    : splitRow[rowKey] && splitRow[rowKey][index] !== undefined
+    ? splitRow[rowKey][index] // Return the value at the specified index
+    : ""; // Default to an empty string
 }
 //#endregion
 
