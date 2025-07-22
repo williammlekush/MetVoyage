@@ -160,14 +160,11 @@ const dropStoredProcedures = () => {
   const files = fs.readdirSync("./sql/programability");
   
   if (files.length) {
-    const sql = files.map((file) => {
-      const fileName = path.parse(file).name //remove extension
-      return `DROP PROCEDURE IF EXISTS ${fileName}`;
-    }).join("\n");
-
     console.log("Dropping stored procedures...");
-
-    queryDb(() => query({ query: sql }));
+    files.map((file) => {
+      const fileName = path.parse(file).name //remove extension
+      queryDb(() => query({ query: `DROP PROCEDURE IF EXISTS ${fileName};` }));
+    });
   }
 };
 
