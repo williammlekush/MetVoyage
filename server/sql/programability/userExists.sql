@@ -1,6 +1,6 @@
-CREATE PROCEDURE userExists(IN userId INT)
+CREATE PROCEDURE userExists(IN userName VARCHAR(255))
 BEGIN
     SELECT id
     FROM users
-    WHERE id = userId;
+    WHERE user_name = userName;
 END;
