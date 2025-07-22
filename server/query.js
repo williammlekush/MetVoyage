@@ -1,4 +1,5 @@
 import fs from "fs";
+import path from "path";
 import mysql from "mysql2";
 import dotenv from "dotenv";
 import {
@@ -135,6 +136,16 @@ const createTables = async () => {
   }
 };
 
+const createStoredProcedures = () => {
+  const files = fs.readdirSync("./sql/programability");
+
+  if (files.length) {
+    for (const file of files) {
+      runQueryFromFile({ queryName: `programability/${path.parse(file).name}` });
+    }
+  }
+};
+
 const dropTables = () => {
   // Disable foreign key checks to delete all tables
   queryDb(() => query({ query: "SET FOREIGN_KEY_CHECKS = 0" }));
@@ -143,6 +154,21 @@ const dropTables = () => {
   );
   // Re-enable foreign key checks
   queryDb(() => query({ query: "SET FOREIGN_KEY_CHECKS = 1" }));
+};
+
+const dropStoredProcedures = () => {
+  const files = fs.readdirSync("./sql/programability");
+  
+  if (files.length) {
+    const sql = files.map((file) => {
+      const fileName = path.parse(file).name //remove extension
+      return `DROP PROCEDURE IF EXISTS ${fileName}`;
+    }).join("\n");
+
+    console.log("Dropping stored procedures...");
+
+    queryDb(() => query({ query: sql }));
+  }
 };
 
 const insertMetData = async () => {
@@ -185,10 +211,14 @@ export const buildDb = async (rebuild = true) => {
   if (rebuild) {
     console.log("Dropping tables...");
     dropTables();
+    dropStoredProcedures();
   }
 
   console.log("Creating tables...");
   createTables();
+
+  console.log("Creating stored procedures...");
+  createStoredProcedures();
 
   // Insert Met data
   console.log("Starting data retrieval and insert...");
