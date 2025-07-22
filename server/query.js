@@ -45,6 +45,18 @@ const queryDb = (queryCallback) => {
   queryCallback();
 };
 
+const queryDbAsync = async (queryCallback) => {
+  return new Promise((resolve, reject) => {
+    try {
+      query({ query: `USE ${process.env.DB_NAME}` });
+      queryCallback(); // Execute the callback
+      resolve(); // Resolve the Promise when the callback finishes
+    } catch (error) {
+      reject(error); // Reject the Promise if an error occurs
+    }
+  });
+};
+
 export const runQueryFromFile = ({ queryName, resultCallback }) => {
   fs.readFile(`./sql/${queryName}.sql`, "utf8", (error, sql) => {
     if (error) {
@@ -53,6 +65,23 @@ export const runQueryFromFile = ({ queryName, resultCallback }) => {
     }
     queryDb(() => query({ query: sql, resultCallback }));
   });
+};
+
+export const runQueryFromFileAsync = async ({ queryName, resultCallback }) => {
+  try {
+    // Read the SQL file asynchronously
+    const sql = await fs.promises.readFile(`./sql/${queryName}.sql`, "utf8");
+
+    // Execute the query
+    const result = await queryDbAsync(() =>
+      query({ query: sql, resultCallback })
+    );
+
+    return result;
+  } catch (error) {
+    console.error("Error executing query from file:", error);
+    throw error;
+  }
 };
 
 const insertObjects = (table, columns, objects) =>
@@ -100,10 +129,11 @@ const createDb = () =>
     query({ query: `CREATE DATABASE IF NOT EXISTS ${process.env.DB_NAME}` })
   );
 
-const createTables = () =>
-  Object.values(Table).forEach((table) =>
-    runQueryFromFile({ queryName: `Create${table}` })
-  );
+const createTables = async () => {
+  for (const table of Object.values(Table)) {
+    await runQueryFromFileAsync({ queryName: `Create${table}` });
+  }
+};
 
 const dropTables = () => {
   // Disable foreign key checks to delete all tables
