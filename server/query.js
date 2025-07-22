@@ -58,6 +58,11 @@ const queryDbAsync = async (queryCallback) => {
   });
 };
 
+export const runStoredProcedure = ({ procedure, parameters, resultCallback }) => {
+    const sql = `CALL ${procedure}(${parameters.join(", ")});`;
+    queryDb(() => query({ query: sql, resultCallback }));
+};
+
 export const runQueryFromFile = ({ queryName, resultCallback }) => {
   fs.readFile(`./sql/${queryName}.sql`, "utf8", (error, sql) => {
     if (error) {
