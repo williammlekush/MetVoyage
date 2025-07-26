@@ -1,12 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
-import Box from '@mui/joy/Box';
-import Grid from '@mui/joy/Grid';
-import Snackbar from '@mui/joy/Snackbar';
-import Tab from '@mui/joy/Tab';
-import TabList from '@mui/joy/TabList';
-import TabPanel from '@mui/joy/TabPanel';
-import Tabs from '@mui/joy/Tabs';
-import Typography from '@mui/joy/Typography';
+import {Box, Grid, Snackbar, Tab, TabList, TabPanel, Tabs, Typography} from '@mui/joy';
+import MetadataItem from '../Shared/MetadataItem.jsx';
 import axios from "axios";
 
 function Art() {
@@ -15,6 +9,17 @@ function Art() {
 
     const artistInfo = (artist.artist_prefix ? artist.artist_prefix + " " : "")
             + artist.name;
+
+    const artDetails = [
+        {label: "Title", value: art.title},
+        {label: "Artist", value: artistInfo},
+        {label: "Date", value: art.date},
+        {label: "Medium", value: art.medium},
+        {label: "Dimensions", value: art.dimensions},
+        {label: "Classification", value: art.classification},
+        {label: "Credit Line", value: art.credit_line},
+        {label: "Object Number", value: art.number},
+    ]
 
     const [apiError, setApiError] = useState();
 
@@ -63,7 +68,7 @@ function Art() {
                     flexDirection="column"
                 >
                     <Typography level="h1" color="primary">
-                        {art.id ? art.title : "No title on record."}
+                        {art.title ? art.title : "No title on record."}
                     </Typography>
                     <Typography level="h4" color="neutral">
                         {artist.id ? artistInfo : "No artist on record."}
@@ -95,7 +100,9 @@ function Art() {
                         </Tab>
                     </TabList>
                     <TabPanel value={0}>
-                        <b>First</b> tab panel
+                        {artDetails.map((item, index) => (
+                            <MetadataItem key={index} label={item.label} value={item.value} />
+                        ))}
                     </TabPanel>
                     <TabPanel value={1}>
                         <b>Second</b> tab panel
