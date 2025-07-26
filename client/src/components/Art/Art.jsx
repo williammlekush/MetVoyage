@@ -13,7 +13,8 @@ function Art() {
     const [art, setArt] = useState({});
     const [artist, setArtist] = useState({});
 
-    const artistInfo = artist.artist_prefix + " " + artist.name;
+    const artistInfo = (artist.artist_prefix ? artist.artist_prefix + " " : "")
+            + artist.name;
 
     const [apiError, setApiError] = useState();
 
@@ -62,10 +63,10 @@ function Art() {
                     flexDirection="column"
                 >
                     <Typography level="h1" color="primary">
-                        {art.id ? art.title : "No art found."}
+                        {art.id ? art.title : "No title on record."}
                     </Typography>
-                    <Typography level="h3" color="neutral">
-                        {artist.id ? artistInfo : "No artist found."}
+                    <Typography level="h4" color="neutral">
+                        {artist.id ? artistInfo : "No artist on record."}
                     </Typography>
                 </Grid>
                 {art.url && (                
