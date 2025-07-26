@@ -1,9 +1,15 @@
 import { useState, useCallback, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import {Box, Grid, Snackbar, Tab, TabList, TabPanel, Tabs, Typography} from '@mui/joy';
+import { CssVarsProvider } from '@mui/joy/styles';
 import MetadataItem from '../Shared/MetadataItem.jsx';
 import axios from "axios";
 
 function Art() {
+    const location = useLocation();
+    const params = new URLSearchParams(location.search);
+    const id = params.get("id"); 
+
     const [art, setArt] = useState({});
     const [artist, setArtist] = useState({});
 
@@ -39,10 +45,6 @@ function Art() {
 
     const [apiError, setApiError] = useState();
 
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get("id"); 
-
-
     const loadArt = useCallback(async (id) => {
         await axios
         .get(`/api/object/read`, { params: { id } })
@@ -74,7 +76,7 @@ function Art() {
     }, [id, loadArt]);
 
     return (
-        <Box sx={{ margin:6, maxWidth:'100vw', p:2}}>
+        <CssVarsProvider sx={{ margin:6, maxWidth:'100vw', p:2}}>
             <Grid
                 container
                 spacing={2}
@@ -82,7 +84,7 @@ function Art() {
                 alignItems="center"
                 justifyContent={"center"}
             >
-                <Grid
+                <Grid item
                     size={6}
                     flexDirection="column"
                 >
@@ -93,10 +95,8 @@ function Art() {
                         {artist.id ? artistCaption : "No artist on record."}
                     </Typography>
                 </Grid>
-                {art.url && (                
-                    <Grid
-                        size={6}
-                    >
+                {art.url && (
+                    <Grid item xs={6}>
                         <Box
                             component="img"
                             src={art.url}
@@ -147,7 +147,7 @@ function Art() {
             >
                 {apiError}
             </Snackbar>
-        </Box>
+        </CssVarsProvider>
     );
 }
 

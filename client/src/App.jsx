@@ -1,5 +1,6 @@
 import "./App.css";
 import React, { useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function App() {
@@ -7,6 +8,13 @@ function App() {
   const [message, setMessage] = useState("");
 
   const [apiError, setApiError] = useState();
+
+  const [id, setId] = useState("");
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate("/art?id=" + id);
+  };
 
   const getHello = useCallback(async () => {
     await axios
@@ -42,6 +50,15 @@ function App() {
 
   return (
     <div>
+      <input
+        type="text"
+        value={id}
+        placeholder="Enter a object Id"
+        onChange={(e) => setId(e.target.value)}
+        />
+      <button onClick={handleClick} style={{ marginRight: "1rem" }}>
+        Go To Art
+      </button>
       <h2>Oh, hello?</h2>
       {data &&
         data.map((hello) => (
