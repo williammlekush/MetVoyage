@@ -11,4 +11,12 @@ ROUTER.get("/read", (_request, response) => {
   });
 });
 
+ROUTER.get("/read/artist", (_request, response) => {
+    runStoredProcedure({
+    procedure: "loadObjectArtists",
+    parameters: [_request.query.id],
+    resultCallback: (result) => response.status(200).json(result),
+  });
+});
+
 export default ROUTER;
