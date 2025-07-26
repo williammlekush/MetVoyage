@@ -21,6 +21,7 @@ function Art() {
             + artist.name;
 
     const [apiError, setApiError] = useState();
+    const [message, setMessage] = useState("");
     // #endregion
 
     // #region API calls
@@ -44,6 +45,19 @@ function Art() {
         })
         .catch((error) => setApiError(error));
     }, []);
+
+    const favoriteArt = useCallback(async () => {
+        await axios
+        .post("/api/object/favorite", { id: 1, objectId: art.id })
+        .then((response) => {
+            if (response.status === 200 && response.data[0][0].affected_rows > 0) {
+                setMessage("Art favorited successfully.");
+            } else {
+                setApiError("Art not favorited :-(");
+            }
+        })
+        .catch((error) => setApiError(error));
+    }, [art.id]);
     // #endregion
 
     // #region useEffects
@@ -74,7 +88,7 @@ function Art() {
                         <Typography level="h1" color="primary">
                             {art.title ? art.title : "No title on record."}
                         </Typography>
-                        <IconButton>
+                        <IconButton onClick={favoriteArt}>
                             <FavoriteIcon color="danger" />
                         </IconButton>
                     </Box>
@@ -104,6 +118,15 @@ function Art() {
                 variant="soft"
             >
                 {apiError}
+            </Snackbar>
+            <Snackbar
+                open={!!message}
+                onClose={() => setMessage(null)}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                color="success"
+                variant="soft"
+            >
+                {message}
             </Snackbar>
         </CssVarsProvider>
     );

@@ -19,4 +19,12 @@ ROUTER.get("/read/artist", (_request, response) => {
   });
 });
 
+ROUTER.post("/favorite", (_request, response) => {
+  runStoredProcedure({
+    procedure: "updateFavorite",
+    parameters: [_request.body.id, _request.body.objectId],
+    resultCallback: (result) => response.status(200).json(result),
+  });
+});
+
 export default ROUTER;
