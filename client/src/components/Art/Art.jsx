@@ -7,7 +7,7 @@ function Art() {
     const [art, setArt] = useState({});
     const [artist, setArtist] = useState({});
 
-    const artistInfo = (artist.artist_prefix ? artist.artist_prefix + " " : "")
+    const artistCaption = (artist.artist_prefix ? artist.artist_prefix + " " : "")
             + artist.name;
 
     const artDetails = [
@@ -87,7 +87,7 @@ function Art() {
                         {art.title ? art.title : "No title on record."}
                     </Typography>
                     <Typography level="h4" color="neutral">
-                        {artist.id ? artistInfo : "No artist on record."}
+                        {artist.id ? artistCaption : "No artist on record."}
                     </Typography>
                 </Grid>
                 {art.url && (                
@@ -135,8 +135,6 @@ function Art() {
                     </TabPanel>
                 </Tabs>
             </Box>
-            {/*<Box>{JSON.stringify(art)}</Box>
-            <Box>{JSON.stringify(artist)}</Box>*/}
             <Snackbar
                 open={!!apiError}
                 autoHideDuration={6000}
