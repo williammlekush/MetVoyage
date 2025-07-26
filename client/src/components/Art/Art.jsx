@@ -12,13 +12,29 @@ function Art() {
 
     const artDetails = [
         {label: "Title", value: art.title},
-        {label: "Artist", value: artistInfo},
         {label: "Date", value: art.date},
         {label: "Medium", value: art.medium},
         {label: "Dimensions", value: art.dimensions},
         {label: "Classification", value: art.classification},
         {label: "Credit Line", value: art.credit_line},
         {label: "Object Number", value: art.number},
+    ]
+
+    const artistDetails = [
+        {label: "Name", value: artist.name},
+        {label: "Nationality", value: artist.nationality},
+        {label: "Birth Year", value: artist.begin_date},
+        {label: "Death Year", value: artist.end_date},
+    ]
+
+    const artOrigin = [
+        {label: "Country", value: art.country},
+        {label: "Region", value: art.region},
+        {label: "Period", value: art.period},
+        {label: "Dynasty", value: art.dynasty},
+        {label: "Reign", value: art.reign},
+        {label: "Culture", value: art.culture},
+        {label: "Locale", value: art.locale},
     ]
 
     const [apiError, setApiError] = useState();
@@ -55,7 +71,7 @@ function Art() {
     }, [id, loadArt]);
 
     return (
-        <Box>
+        <Box sx={{ margin:6, maxWidth:'100vw', p:2}}>
             <Grid
                 container
                 spacing={2}
@@ -87,13 +103,16 @@ function Art() {
                 )}
             </Grid>
             <Box>
-                <Typography level="h2" color="primary">
+                <Typography level="h2">
                         Artwork Details
                     </Typography>
                 <Tabs orientation="vertical" defaultValue={0}>
                     <TabList>
                         <Tab>
                             Description
+                        </Tab>
+                        <Tab>
+                            Artist
                         </Tab>
                         <Tab>
                             Origin
@@ -105,12 +124,19 @@ function Art() {
                         ))}
                     </TabPanel>
                     <TabPanel value={1}>
-                        <b>Second</b> tab panel
+                        {artistDetails.map((item, index) => (
+                            <MetadataItem key={index} label={item.label} value={item.value} />
+                        ))}
+                    </TabPanel>
+                    <TabPanel value={2}>
+                        {artOrigin.map((item, index) => (
+                            <MetadataItem key={index} label={item.label} value={item.value} />
+                        ))}
                     </TabPanel>
                 </Tabs>
             </Box>
-            <Box>{JSON.stringify(art)}</Box>
-            <Box>{JSON.stringify(artist)}</Box>
+            {/*<Box>{JSON.stringify(art)}</Box>
+            <Box>{JSON.stringify(artist)}</Box>*/}
             <Snackbar
                 open={!!apiError}
                 autoHideDuration={6000}
