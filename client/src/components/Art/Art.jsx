@@ -1,9 +1,10 @@
 import { useState, useCallback, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import {Box, Grid, Snackbar, Tab, TabList, TabPanel, Tabs, Typography} from '@mui/joy';
+import {Box, Grid, IconButton, Snackbar, Typography} from '@mui/joy';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import { CssVarsProvider } from '@mui/joy/styles';
-import MetadataItem from '../Shared/MetadataItem.jsx';
 import axios from "axios";
+import ArtDetails from "./ArtDetails";
 
 function Art() {
     const location = useLocation();
@@ -15,33 +16,6 @@ function Art() {
 
     const artistCaption = (artist.artist_prefix ? artist.artist_prefix + " " : "")
             + artist.name;
-
-    const artDetails = [
-        {label: "Title", value: art.title},
-        {label: "Date", value: art.date},
-        {label: "Medium", value: art.medium},
-        {label: "Dimensions", value: art.dimensions},
-        {label: "Classification", value: art.classification},
-        {label: "Credit Line", value: art.credit_line},
-        {label: "Object Number", value: art.number},
-    ]
-
-    const artistDetails = [
-        {label: "Name", value: artist.name},
-        {label: "Nationality", value: artist.nationality},
-        {label: "Birth Year", value: artist.begin_date},
-        {label: "Death Year", value: artist.end_date},
-    ]
-
-    const artOrigin = [
-        {label: "Country", value: art.country},
-        {label: "Region", value: art.region},
-        {label: "Period", value: art.period},
-        {label: "Dynasty", value: art.dynasty},
-        {label: "Reign", value: art.reign},
-        {label: "Culture", value: art.culture},
-        {label: "Locale", value: art.locale},
-    ]
 
     const [apiError, setApiError] = useState();
 
@@ -88,9 +62,14 @@ function Art() {
                     size={6}
                     flexDirection="column"
                 >
-                    <Typography level="h1" color="primary">
-                        {art.title ? art.title : "No title on record."}
-                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography level="h1" color="primary">
+                            {art.title ? art.title : "No title on record."}
+                        </Typography>
+                        <IconButton>
+                            <FavoriteIcon color="danger" />
+                        </IconButton>
+                    </Box>
                     <Typography level="h4" color="neutral">
                         {artist.id ? artistCaption : "No artist on record."}
                     </Typography>
@@ -107,36 +86,9 @@ function Art() {
             </Grid>
             <Box>
                 <Typography level="h2">
-                        Artwork Details
-                    </Typography>
-                <Tabs orientation="vertical" defaultValue={0}>
-                    <TabList>
-                        <Tab>
-                            Description
-                        </Tab>
-                        <Tab>
-                            Artist
-                        </Tab>
-                        <Tab>
-                            Origin
-                        </Tab>
-                    </TabList>
-                    <TabPanel value={0}>
-                        {artDetails.map((item, index) => (
-                            <MetadataItem key={index} label={item.label} value={item.value} />
-                        ))}
-                    </TabPanel>
-                    <TabPanel value={1}>
-                        {artistDetails.map((item, index) => (
-                            <MetadataItem key={index} label={item.label} value={item.value} />
-                        ))}
-                    </TabPanel>
-                    <TabPanel value={2}>
-                        {artOrigin.map((item, index) => (
-                            <MetadataItem key={index} label={item.label} value={item.value} />
-                        ))}
-                    </TabPanel>
-                </Tabs>
+                    Artwork Details
+                </Typography>
+                <ArtDetails art={art} artist={artist} />
             </Box>
             <Snackbar
                 open={!!apiError}

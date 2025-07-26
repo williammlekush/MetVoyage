@@ -2,7 +2,7 @@ import {Grid} from '@mui/joy';
 
 function MetadataItem({ label, value }) {
     return (
-        <Grid container spacing={1}>
+        <Grid container spacing={1} textAlign="left">
             <Grid item xs={4}>
                 <strong>{label}:</strong>
             </Grid>
