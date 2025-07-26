@@ -7,10 +7,13 @@ import axios from "axios";
 import ArtDetails from "./ArtDetails";
 
 function Art() {
+    // #region navigation/location
     const location = useLocation();
     const params = new URLSearchParams(location.search);
     const id = params.get("id"); 
+    // #endregion
 
+    // #region state
     const [art, setArt] = useState({});
     const [artist, setArtist] = useState({});
 
@@ -18,7 +21,9 @@ function Art() {
             + artist.name;
 
     const [apiError, setApiError] = useState();
+    // #endregion
 
+    // #region API calls
     const loadArt = useCallback(async (id) => {
         await axios
         .get(`/api/object/read`, { params: { id } })
@@ -39,7 +44,9 @@ function Art() {
         })
         .catch((error) => setApiError(error));
     }, []);
+    // #endregion
 
+    // #region useEffects
     useEffect(() => {
         if (id > 0 && !isNaN(id)) {
             loadArt(id);
@@ -48,6 +55,7 @@ function Art() {
             setApiError("Invalid ID provided.");
         }
     }, [id, loadArt]);
+    // #endregion
 
     return (
         <CssVarsProvider sx={{ margin:6, maxWidth:'100vw', p:2}}>
