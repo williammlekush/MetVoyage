@@ -74,15 +74,13 @@ function Art() {
                         {artist.id ? artistCaption : "No artist on record."}
                     </Typography>
                 </Grid>
-                {art.url && (
                     <Grid item xs={6}>
                         <Box
                             component="img"
-                            src={art.url}
-                            alt={art.publicCaption}
+                            src={art.url ? art.url : "https://placehold.co/400x300?text=No+image+on+record"}
+                            alt={art.url ? art.publicCaption : "No image available."}
                             sx={{width: "100%", maxWidth: 600}}/>
                     </Grid>
-                )}
             </Grid>
             <Box>
                 <Typography level="h2">
