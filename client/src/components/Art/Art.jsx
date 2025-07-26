@@ -6,7 +6,7 @@ import { CssVarsProvider } from '@mui/joy/styles';
 import axios from "axios";
 import ArtDetails from "./ArtDetails";
 
-function Art() {
+function Art({ userId }) {
     // #region navigation/location
     const location = useLocation();
     const params = new URLSearchParams(location.search);
@@ -48,7 +48,7 @@ function Art() {
 
     const favoriteArt = useCallback(async () => {
         await axios
-        .post("/api/object/favorite", { id: 1, objectId: art.id })
+        .post("/api/object/favorite", { id: userId, objectId: art.id })
         .then((response) => {
             if (response.status === 200 && response.data[0][0].affected_rows > 0) {
                 setMessage("Art favorited successfully.");
@@ -57,7 +57,7 @@ function Art() {
             }
         })
         .catch((error) => setApiError(error));
-    }, [art.id]);
+    }, [art.id, userId]);
     // #endregion
 
     // #region useEffects
@@ -88,9 +88,9 @@ function Art() {
                         <Typography level="h1" color="primary">
                             {art.title ? art.title : "No title on record."}
                         </Typography>
-                        <IconButton onClick={favoriteArt}>
+                        {userId > 0 && <IconButton onClick={favoriteArt}>
                             <FavoriteIcon color="danger" />
-                        </IconButton>
+                        </IconButton>}
                     </Box>
                     <Typography level="h4" color="neutral">
                         {artist.id ? artistCaption : "No artist on record."}
