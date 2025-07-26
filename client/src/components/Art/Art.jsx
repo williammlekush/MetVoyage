@@ -68,6 +68,9 @@ function Art() {
         if (id > 0 && !isNaN(id)) {
             loadArt(id);
         }
+        else {
+            setApiError("Invalid ID provided.");
+        }
     }, [id, loadArt]);
 
     return (
@@ -137,10 +140,13 @@ function Art() {
             </Box>
             <Snackbar
                 open={!!apiError}
-                autoHideDuration={6000}
                 onClose={() => setApiError(null)}
-                message={apiError ? apiError.message : ""}
-            />
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                color="danger"
+                variant="soft"
+            >
+                {apiError}
+            </Snackbar>
         </Box>
     );
 }
