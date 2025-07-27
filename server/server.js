@@ -9,7 +9,7 @@ dotenv.config();
 
 connect();
 
-buildDb(); // Note: Comment out to avoid re-building every time
+await buildDb(); // Note: Comment out to avoid re-building every time
 
 // // Example data retrieval.
 // runQueryFromFile({
