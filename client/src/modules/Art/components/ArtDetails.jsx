@@ -1,4 +1,4 @@
-import MetadataItem from "../../Shared/MetadataItem.jsx";
+import MetadataItem from "../../Shared/components/MetadataItem";
 import { Tab, TabList, TabPanel, Tabs } from "@mui/joy";
 
 function ArtDetails({ art, artist }) {
