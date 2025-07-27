@@ -34,7 +34,7 @@ function Art({ userId }) {
       })
       .catch((error) => setApiError(error));
 
-    await getArtist(id)
+    await getArtist({ artistId: id })
       .then((response) => {
         if (response.status === 200) {
           const artistData = response.data[0][0];

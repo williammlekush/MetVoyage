@@ -4,7 +4,7 @@ import { runStoredProcedure } from "../query.js";
 const ROUTER = express.Router();
 
 ROUTER.get("/read", (_request, response) => {
-    runStoredProcedure({
+  runStoredProcedure({
     procedure: "loadObject",
     parameters: [_request.query.id],
     resultCallback: (result) => response.status(200).json(result),
@@ -12,9 +12,9 @@ ROUTER.get("/read", (_request, response) => {
 });
 
 ROUTER.get("/read/artist", (_request, response) => {
-    runStoredProcedure({
+  runStoredProcedure({
     procedure: "loadObjectArtists",
-    parameters: [_request.query.id],
+    parameters: [_request.query.objectId],
     resultCallback: (result) => response.status(200).json(result),
   });
 });
