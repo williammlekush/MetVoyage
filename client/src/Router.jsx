@@ -1,6 +1,6 @@
 // App.jsx or Router.jsx
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Art from "./components/Art/Art";
+import Art from "./modules/Art/components/Art";
 import App from "./App";
 
 function Router() {
