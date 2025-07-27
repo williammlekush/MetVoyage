@@ -3,13 +3,14 @@ import cors from "cors";
 import dotenv from "dotenv";
 import HELLO from "./routes/hello.js";
 import OBJECT from "./routes/object.js";
-import { buildDb, connect } from "./query.js";
+import { buildDb, buildStoredProcedures, connect } from "./query.js";
 
 dotenv.config();
 
 connect();
 
-await buildDb(); // Note: Comment out to avoid re-building every time
+//await buildDb(); // Comment out to avoid re-building the database every time
+buildStoredProcedures(); // Comment out to avoid re-building stored procedures every time
 
 // // Example data retrieval.
 // runQueryFromFile({

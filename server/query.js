@@ -58,9 +58,13 @@ const queryDbAsync = async (queryCallback) => {
   });
 };
 
-export const runStoredProcedure = ({ procedure, parameters, resultCallback }) => {
-    const sql = `CALL ${procedure}(${parameters.join(", ")});`;
-    queryDb(() => query({ query: sql, resultCallback }));
+export const runStoredProcedure = ({
+  procedure,
+  parameters,
+  resultCallback,
+}) => {
+  const sql = `CALL ${procedure}(${parameters.join(", ")});`;
+  queryDb(() => query({ query: sql, resultCallback }));
 };
 
 export const runQueryFromFile = ({ queryName, resultCallback }) => {
@@ -146,7 +150,9 @@ const createStoredProcedures = () => {
 
   if (files.length) {
     for (const file of files) {
-      runQueryFromFile({ queryName: `programability/${path.parse(file).name}` });
+      runQueryFromFile({
+        queryName: `programability/${path.parse(file).name}`,
+      });
     }
   }
 };
@@ -163,11 +169,10 @@ const dropTables = () => {
 
 const dropStoredProcedures = () => {
   const files = fs.readdirSync("./sql/programability");
-  
+
   if (files.length) {
-    console.log("Dropping stored procedures...");
     files.map((file) => {
-      const fileName = path.parse(file).name //remove extension
+      const fileName = path.parse(file).name; //remove extension
       queryDb(() => query({ query: `DROP PROCEDURE IF EXISTS ${fileName};` }));
     });
   }
@@ -213,19 +218,25 @@ export const buildDb = async (rebuild = true) => {
   if (rebuild) {
     console.log("Dropping tables...");
     dropTables();
-    dropStoredProcedures();
   }
 
   console.log("Creating tables...");
   createTables();
-
-  console.log("Creating stored procedures...");
-  createStoredProcedures();
 
   // Insert Met data
   console.log("Starting data retrieval and insert...");
   await insertMetData();
 
   console.log("Database built successfully!");
+};
+
+export const buildStoredProcedures = (rebuild = true) => {
+  if (rebuild) {
+    console.log("Dropping stored procedures");
+    dropStoredProcedures();
+  }
+
+  console.log("Creating stored procedures...");
+  createStoredProcedures();
 };
 //#endregion
