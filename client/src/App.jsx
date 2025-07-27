@@ -1,4 +1,3 @@
-import "./App.css";
 import React, { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -55,7 +54,7 @@ function App() {
         value={id}
         placeholder="Enter a object Id"
         onChange={(e) => setId(e.target.value)}
-        />
+      />
       <button onClick={handleClick} style={{ marginRight: "1rem" }}>
         Go To Art
       </button>
