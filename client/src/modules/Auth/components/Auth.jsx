@@ -3,6 +3,7 @@ import {
   Button,
   Card,
   FormControl,
+  FormHelperText,
   FormLabel,
   Input,
   Snackbar,
@@ -20,19 +21,28 @@ export default function Auth() {
   });
 
   const username = watch("username");
+  const [invalidUsername, setInvalidUsername] = useState();
   const [isUsernameValid, setIsUsernameValid] = useState();
   const [apiError, setApiError] = useState();
+
+  const updateUsernameValidation = useCallback(
+    (isValid) => {
+      setIsUsernameValid(isValid);
+      if (!isValid) setInvalidUsername(username);
+    },
+    [username]
+  );
 
   const validateUsername = useCallback(
     async () =>
       await getIsUsernameValid(username)
         .then((response) =>
           response.status === 200
-            ? setIsUsernameValid(response.data)
+            ? updateUsernameValidation(response.data)
             : setApiError("Ope! Something went wrong! Tell a dev.")
         )
         .catch((error) => setApiError(error)),
-    [username]
+    [updateUsernameValidation, username]
   );
 
   return (
@@ -56,7 +66,11 @@ export default function Auth() {
           MetVoyage
         </Typography>
         <Typography level="h1">Create account</Typography>
-        <FormControl sx={{ marginBottom: 1 }} disabled={isUsernameValid}>
+        <FormControl
+          sx={{ marginBottom: 1 }}
+          disabled={isUsernameValid}
+          error={isUsernameValid === false || username === invalidUsername}
+        >
           <FormLabel>Username</FormLabel>
           <Input
             variant="outlined"
@@ -69,6 +83,12 @@ export default function Auth() {
                 setValue("username", value.trim()),
             })}
           />
+          {isUsernameValid === false ||
+            (username === invalidUsername && (
+              <FormHelperText>
+                That username is taken.😢 Try again!
+              </FormHelperText>
+            ))}
         </FormControl>
 
         <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
