@@ -9,21 +9,39 @@ import {
   Snackbar,
   Typography,
 } from "@mui/joy";
-import Collapse from "@mui/material/Collapse";
 import { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { getIsUsernameValid } from "./api";
+import InputValidMessage from "./InputValidMessage";
 
 export default function Auth() {
-  const { watch, register, setValue } = useForm({
+  const [apiError, setApiError] = useState();
+
+  //#region form state
+  const {
+    watch,
+    register,
+    setValue,
+    formState: { errors },
+  } = useForm({
     defaultValues: { username: "", password: "" },
-    mode: "onBlur",
+    mode: "all",
   });
 
   const username = watch("username");
+  const password = watch("password");
+
+  const AuthState = {
+    CREATE_NAME: 0,
+    CREATE_PASSWORD: 1,
+  };
+
+  const [authState, setAuthState] = useState(AuthState.CREATE_NAME);
+  //#endregion
+
+  //#region validate username
   const [invalidUsername, setInvalidUsername] = useState();
   const [isUsernameValid, setIsUsernameValid] = useState();
-  const [apiError, setApiError] = useState();
 
   const updateUsernameValidation = useCallback(
     (isValid) => {
@@ -36,14 +54,16 @@ export default function Auth() {
   const validateUsername = useCallback(
     async () =>
       await getIsUsernameValid(username)
-        .then((response) =>
-          response.status === 200
-            ? updateUsernameValidation(response.data)
-            : setApiError("Ope! Something went wrong! Tell a dev.")
-        )
+        .then((response) => {
+          if (response.status === 200) {
+            updateUsernameValidation(response.data);
+            setAuthState(AuthState.CREATE_PASSWORD);
+          } else setApiError("Ope! Something went wrong! Tell a dev.");
+        })
         .catch((error) => setApiError(error)),
-    [updateUsernameValidation, username]
+    [AuthState.CREATE_PASSWORD, updateUsernameValidation, username]
   );
+  //#endregion
 
   return (
     <>
@@ -65,10 +85,15 @@ export default function Auth() {
         <Typography level="title-lg" color="primary">
           MetVoyage
         </Typography>
-        <Typography level="h1">Create account</Typography>
+        <Typography level="h1">
+          {[AuthState.CREATE_NAME, AuthState.CREATE_PASSWORD].includes(
+            authState
+          )
+            ? "Create account"
+            : "Log in"}
+        </Typography>
         <FormControl
-          sx={{ marginBottom: 1 }}
-          disabled={isUsernameValid}
+          disabled={isUsernameValid || authState === AuthState.CREATE_PASSWORD}
           error={isUsernameValid === false || username === invalidUsername}
         >
           <FormLabel>Username</FormLabel>
@@ -90,16 +115,88 @@ export default function Auth() {
               </FormHelperText>
             ))}
         </FormControl>
-
+        {isUsernameValid && authState === AuthState.CREATE_PASSWORD && (
+          <FormControl>
+            <FormLabel>Password</FormLabel>
+            <Input
+              variant="outlined"
+              placeholder="Enter a password..."
+              slotProps={{ input: { maxLength: 70 } }}
+              {...register("password", {
+                required: true,
+                min: 8,
+                max: 70,
+                pattern:
+                  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>_\-\\[\]/~`+=;']).{8,}$/,
+                onChange: ({ currentTarget: { value } }) =>
+                  setValue("password", value.trim()),
+              })}
+            />
+            <Box
+              sx={{
+                paddingTop: 0.25,
+                paddingLeft: 1,
+                display: "flex",
+                flexWrap: "wrap",
+                columnGap: 1.25,
+              }}
+            >
+              <InputValidMessage
+                isValid={/[a-z]/.test(password)}
+                message="1 lowercase"
+              />
+              <InputValidMessage
+                isValid={/[A-Z]/.test(password)}
+                message="1 uppercase"
+              />
+              <InputValidMessage
+                isValid={/\d/.test(password)}
+                message="1 number"
+              />
+              <InputValidMessage
+                isValid={/[!@#$%^&*(),.?":{}|<>_\-\\[\]/~`+=;']/.test(password)}
+                message="1 special"
+              />
+              <InputValidMessage
+                isValid={password.length > 8}
+                message="8 characters"
+              />
+            </Box>
+          </FormControl>
+        )}
         <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
-          <Button variant="plain">Sign in</Button>
-          <Button
-            variant="solid"
-            disabled={username.trim().length === 0}
-            onClick={validateUsername}
-          >
-            Next
-          </Button>
+          {authState === AuthState.CREATE_NAME && (
+            <>
+              <Button variant="plain">Sign in</Button>
+              <Button
+                variant="solid"
+                disabled={username.trim().length === 0}
+                onClick={validateUsername}
+              >
+                Next
+              </Button>
+            </>
+          )}
+          {authState === AuthState.CREATE_PASSWORD && (
+            <>
+              <Button
+                variant="plain"
+                onClick={() => {
+                  setIsUsernameValid(undefined);
+                  setAuthState(AuthState.CREATE_NAME);
+                }}
+              >
+                Change username
+              </Button>
+              <Button
+                variant="solid"
+                disabled={!password || !!errors.password}
+                onClick={validateUsername}
+              >
+                Create
+              </Button>
+            </>
+          )}
         </Box>
       </Card>
       <Snackbar
