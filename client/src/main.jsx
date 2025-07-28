@@ -11,7 +11,7 @@ createRoot(document.getElementById("root")).render(
         sx={{
           paddingTop: { xs: 2, md: 3 },
           paddingBottom: { xs: 2, sm: 2, md: 3 },
-          paddingX: { xs: 1, sm: 1, md: "20%", lg: "30%" },
+          paddingX: { xs: 1, md: "20%" },
           flex: 1,
           display: "flex",
           flexDirection: "column",
