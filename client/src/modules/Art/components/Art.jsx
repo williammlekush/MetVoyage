@@ -7,6 +7,7 @@ import axios from "axios";
 import ArtDetails from "./ArtDetails";
 import ArtImageLoader from "./ArtImageLoader";
 import { getArt, getArtist } from "../api";
+import capitalize from "../../../utils/stringHelpers";
 
 function Art({ userId }) {
   // #region navigation/location
@@ -20,7 +21,7 @@ function Art({ userId }) {
   const [artist, setArtist] = useState({});
 
   const artistCaption =
-    (artist.artist_prefix ? artist.artist_prefix + " " : "") + artist.name;
+   capitalize((artist.artist_prefix ? artist.artist_prefix + " " : "") + artist.name);
 
   const [apiError, setApiError] = useState();
   const [message, setMessage] = useState("");
