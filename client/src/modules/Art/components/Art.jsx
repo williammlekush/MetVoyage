@@ -7,7 +7,7 @@ import axios from "axios";
 import ArtDetails from "./ArtDetails";
 import ArtImageLoader from "./ArtImageLoader";
 import { getArt, getArtist } from "../api";
-import capitalize from "../../../utils/stringHelpers";
+import capitalize from "../../Shared/utils/stringHelpers";
 
 function Art({ userId }) {
   // #region navigation/location
