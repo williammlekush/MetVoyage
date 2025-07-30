@@ -11,11 +11,12 @@ import {
 } from "@mui/joy";
 import { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
-import { getIsUsernameValid } from "./api";
+import { createUser, getIsUsernameValid } from "./api";
 import InputValidMessage from "./InputValidMessage";
 
 export default function Auth() {
-  const [apiError, setApiError] = useState();
+  const [errorSnackbarMessage, setErrorSnackbarMessage] = useState();
+  const [successSnackbarMessage, setSuccessSnackbarMessage] = useState();
 
   //#region form state
   const {
@@ -43,25 +44,29 @@ export default function Auth() {
   const [invalidUsername, setInvalidUsername] = useState();
   const [isUsernameValid, setIsUsernameValid] = useState();
 
-  const updateUsernameValidation = useCallback(
-    (isValid) => {
-      setIsUsernameValid(isValid);
-      if (!isValid) setInvalidUsername(username);
-    },
-    [username]
-  );
-
   const validateUsername = useCallback(
     async () =>
       await getIsUsernameValid(username)
         .then((response) => {
-          if (response.status === 200) {
-            updateUsernameValidation(response.data);
-            setAuthState(AuthState.CREATE_PASSWORD);
-          } else setApiError("Ope! Something went wrong! Tell a dev.");
+          setIsUsernameValid(response.data);
+          if (response.data) setAuthState(AuthState.CREATE_PASSWORD);
+          else setInvalidUsername(username);
         })
-        .catch((error) => setApiError(error)),
-    [AuthState.CREATE_PASSWORD, updateUsernameValidation, username]
+        .catch((error) => setErrorSnackbarMessage(error)),
+    [AuthState.CREATE_PASSWORD, username]
+  );
+
+  const createAccount = useCallback(
+    async () =>
+      await createUser(username, password)
+        .then(() => {
+          setSuccessSnackbarMessage("User created! Welcome!");
+          // navigate to list page
+        })
+        .catch((error) =>
+          setErrorSnackbarMessage(error.response.data ?? error.message)
+        ),
+    [password, username]
   );
   //#endregion
 
@@ -93,8 +98,8 @@ export default function Auth() {
             : "Log in"}
         </Typography>
         <FormControl
-          disabled={isUsernameValid || authState === AuthState.CREATE_PASSWORD}
-          error={isUsernameValid === false || username === invalidUsername}
+          disabled={isUsernameValid && authState === AuthState.CREATE_PASSWORD}
+          error={isUsernameValid === false && username === invalidUsername}
         >
           <FormLabel>Username</FormLabel>
           <Input
@@ -108,12 +113,11 @@ export default function Auth() {
                 setValue("username", value.trim()),
             })}
           />
-          {isUsernameValid === false ||
-            (username === invalidUsername && (
-              <FormHelperText>
-                That username is taken.😢 Try again!
-              </FormHelperText>
-            ))}
+          {isUsernameValid === false && username === invalidUsername && (
+            <FormHelperText>
+              That username is taken.😢 Try again!
+            </FormHelperText>
+          )}
         </FormControl>
         {isUsernameValid && authState === AuthState.CREATE_PASSWORD && (
           <FormControl>
@@ -191,7 +195,7 @@ export default function Auth() {
               <Button
                 variant="solid"
                 disabled={!password || !!errors.password}
-                onClick={validateUsername}
+                onClick={createAccount}
               >
                 Create
               </Button>
@@ -200,13 +204,22 @@ export default function Auth() {
         </Box>
       </Card>
       <Snackbar
-        open={!!apiError}
-        onClose={() => setApiError(null)}
+        open={!!errorSnackbarMessage}
+        onClose={() => setErrorSnackbarMessage(null)}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         color="danger"
         variant="soft"
       >
-        {apiError}
+        {errorSnackbarMessage}
+      </Snackbar>
+      <Snackbar
+        open={!!successSnackbarMessage}
+        onClose={() => setSuccessSnackbarMessage(null)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        color="success"
+        variant="soft"
+      >
+        {successSnackbarMessage}
       </Snackbar>
     </>
   );

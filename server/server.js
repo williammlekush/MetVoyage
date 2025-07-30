@@ -10,7 +10,7 @@ dotenv.config();
 
 connect();
 
-//await buildDb(); // Comment out to avoid re-building the database every time
+// await buildDb(); // Comment out to avoid re-building the database every time
 buildStoredProcedures(); // Comment out to avoid re-building stored procedures every time
 
 // // Example data retrieval.
