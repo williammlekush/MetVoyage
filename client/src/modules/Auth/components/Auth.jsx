@@ -170,16 +170,21 @@ export default function Auth() {
         )}
         <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
           {authState === AuthState.CREATE_NAME && (
-            <>
-              <Button variant="plain">Sign in</Button>
-              <Button
-                variant="solid"
-                disabled={username.trim().length === 0}
-                onClick={validateUsername}
-              >
-                Next
-              </Button>
-            </>
+            <Button variant="plain">Sign in</Button>
+          )}
+          {authState === AuthState.SIGN_IN_NAME && (
+            <Button variant="plain">Create account</Button>
+          )}
+          {[AuthState.CREATE_NAME, AuthState.SIGN_IN_NAME].includes(
+            authState
+          ) && (
+            <Button
+              variant="solid"
+              disabled={username.trim().length === 0}
+              onClick={validateUsername}
+            >
+              Next
+            </Button>
           )}
           {authState === AuthState.CREATE_PASSWORD && (
             <>
