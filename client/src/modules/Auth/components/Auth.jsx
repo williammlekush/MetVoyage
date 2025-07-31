@@ -35,9 +35,10 @@ export default function Auth() {
   const AuthState = {
     CREATE_NAME: 0,
     CREATE_PASSWORD: 1,
+    SIGN_IN_NAME: 2,
   };
 
-  const [authState, setAuthState] = useState(AuthState.CREATE_NAME);
+  const [authState, setAuthState] = useState(AuthState.SIGN_IN_NAME);
   //#endregion
 
   //#region validate username
@@ -93,9 +94,8 @@ export default function Auth() {
         <Typography level="h1">
           {[AuthState.CREATE_NAME, AuthState.CREATE_PASSWORD].includes(
             authState
-          )
-            ? "Create account"
-            : "Log in"}
+          ) && "Create account"}
+          {[AuthState.SIGN_IN_NAME].includes(authState) && "Sign in"}
         </Typography>
         <FormControl
           disabled={isUsernameValid && authState === AuthState.CREATE_PASSWORD}
