@@ -11,7 +11,11 @@ import {
 } from "@mui/joy";
 import { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
-import { createUser, getUserExistsByUsername } from "./api";
+import {
+  createUser,
+  getUserExistsByUsername,
+  getUserExistsByUsernamePassword,
+} from "./api";
 import InputValidMessage from "./InputValidMessage";
 
 export default function Auth() {
@@ -82,7 +86,18 @@ export default function Auth() {
     [password, username]
   );
 
-  const signIn = useCallback(async () => {}, []);
+  const signIn = useCallback(
+    async () =>
+      await getUserExistsByUsernamePassword(username, password)
+        .then(() => {
+          setSuccessSnackbarMessage("Welcome back!");
+          // navigate to list page
+        })
+        .catch((error) =>
+          setErrorSnackbarMessage(error.response.data ?? error.message)
+        ),
+    [password, username]
+  );
   //#endregion
 
   return (
@@ -148,60 +163,67 @@ export default function Auth() {
               </FormHelperText>
             )}
         </FormControl>
-        {(userExists === false && authState === AuthState.CREATE_PASSWORD) ||
-          (userExists && authState === AuthState.SIGN_IN_PASSWORD && (
-            <FormControl>
-              <FormLabel>Password</FormLabel>
-              <Input
-                variant="outlined"
-                placeholder="Enter a password..."
-                slotProps={{ input: { maxLength: 70 } }}
-                {...register("password", {
-                  required: true,
-                  min: 8,
-                  max: 70,
-                  pattern:
-                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>_\-\\[\]/~`+=;']).{8,}$/,
-                  onChange: ({ currentTarget: { value } }) =>
-                    setValue("password", value.trim()),
-                })}
+
+        {authState === AuthState.CREATE_PASSWORD && (
+          <FormControl>
+            <FormLabel>Password</FormLabel>
+            <Input
+              variant="outlined"
+              placeholder="Enter a password..."
+              slotProps={{ input: { maxLength: 70 } }}
+              {...register("password", {
+                required: true,
+                min: 8,
+                max: 70,
+                pattern:
+                  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>_\-\\[\]/~`+=;']).{8,}$/,
+                onChange: ({ currentTarget: { value } }) =>
+                  setValue("password", value.trim()),
+              })}
+            />
+            <Box
+              sx={{
+                paddingTop: 0.25,
+                paddingLeft: 1,
+                display: "flex",
+                flexWrap: "wrap",
+                columnGap: 1.25,
+              }}
+            >
+              <InputValidMessage
+                isValid={/[a-z]/.test(password)}
+                message="1 lowercase"
               />
-              {authState === AuthState.CREATE_PASSWORD && (
-                <Box
-                  sx={{
-                    paddingTop: 0.25,
-                    paddingLeft: 1,
-                    display: "flex",
-                    flexWrap: "wrap",
-                    columnGap: 1.25,
-                  }}
-                >
-                  <InputValidMessage
-                    isValid={/[a-z]/.test(password)}
-                    message="1 lowercase"
-                  />
-                  <InputValidMessage
-                    isValid={/[A-Z]/.test(password)}
-                    message="1 uppercase"
-                  />
-                  <InputValidMessage
-                    isValid={/\d/.test(password)}
-                    message="1 number"
-                  />
-                  <InputValidMessage
-                    isValid={/[!@#$%^&*(),.?":{}|<>_\-\\[\]/~`+=;']/.test(
-                      password
-                    )}
-                    message="1 special"
-                  />
-                  <InputValidMessage
-                    isValid={password.length > 8}
-                    message="8 characters"
-                  />
-                </Box>
-              )}
-            </FormControl>
-          ))}
+              <InputValidMessage
+                isValid={/[A-Z]/.test(password)}
+                message="1 uppercase"
+              />
+              <InputValidMessage
+                isValid={/\d/.test(password)}
+                message="1 number"
+              />
+              <InputValidMessage
+                isValid={/[!@#$%^&*(),.?":{}|<>_\-\\[\]/~`+=;']/.test(password)}
+                message="1 special"
+              />
+              <InputValidMessage
+                isValid={password.length > 8}
+                message="8 characters"
+              />
+            </Box>
+          </FormControl>
+        )}
+        {authState === AuthState.SIGN_IN_PASSWORD && (
+          <FormControl>
+            <FormLabel>Password</FormLabel>
+            <Input
+              variant="outlined"
+              placeholder="Enter a password..."
+              slotProps={{ input: { maxLength: 70 } }}
+              {...register("password", { required: true })}
+            />
+          </FormControl>
+        )}
         <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
           {authState === AuthState.CREATE_NAME && (
             <Button

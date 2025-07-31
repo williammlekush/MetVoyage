@@ -11,6 +11,18 @@ ROUTER.get("/existsByUsername", (_request, response) => {
   });
 });
 
+ROUTER.get("/existsByUsernamePassword", (_request, response) => {
+  runStoredProcedure({
+    procedure: "signIn",
+    parameters: [_request.query.userName, _request.query.passWord],
+    resultCallback: (result) => {
+      const success = result[0].length === 1;
+      if (success) response.status(200).json(success);
+      else response.status(401).json("Sign in failed. Try again.");
+    },
+  });
+});
+
 ROUTER.post("/create", (_request, response) => {
   runStoredProcedure({
     procedure: "insertUser",
