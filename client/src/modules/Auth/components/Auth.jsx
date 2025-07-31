@@ -5,6 +5,7 @@ import {
   FormControl,
   FormHelperText,
   FormLabel,
+  IconButton,
   Input,
   Snackbar,
   Typography,
@@ -17,6 +18,7 @@ import {
   getUserExistsByUsernamePassword,
 } from "./api";
 import InputValidMessage from "./InputValidMessage";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 export default function Auth() {
   const [errorSnackbarMessage, setErrorSnackbarMessage] = useState();
@@ -46,7 +48,7 @@ export default function Auth() {
   const [authState, setAuthState] = useState(AuthState.SIGN_IN_NAME);
   //#endregion
 
-  //#region validate username
+  //#region validate input
   const [gotUsername, setGotUsername] = useState();
   const [userExists, setUserExists] = useState();
 
@@ -73,19 +75,6 @@ export default function Auth() {
     ]
   );
 
-  const createAccount = useCallback(
-    async () =>
-      await createUser(username, password)
-        .then(() => {
-          setSuccessSnackbarMessage("User created! Welcome!");
-          // navigate to list page
-        })
-        .catch((error) =>
-          setErrorSnackbarMessage(error.response.data ?? error.message)
-        ),
-    [password, username]
-  );
-
   const signIn = useCallback(
     async () =>
       await getUserExistsByUsernamePassword(username, password)
@@ -98,6 +87,25 @@ export default function Auth() {
         ),
     [password, username]
   );
+  //#endregion
+
+  //#region create user
+  const createAccount = useCallback(
+    async () =>
+      await createUser(username, password)
+        .then(() => {
+          setSuccessSnackbarMessage("User created! Welcome!");
+          // navigate to list page
+        })
+        .catch((error) =>
+          setErrorSnackbarMessage(error.response.data ?? error.message)
+        ),
+    [password, username]
+  );
+  //#endregion
+
+  //#region show/hide pass char
+  const [showPassword, setShowPassword] = useState(false);
   //#endregion
 
   return (
@@ -220,7 +228,13 @@ export default function Auth() {
               variant="outlined"
               placeholder="Enter a password..."
               slotProps={{ input: { maxLength: 70 } }}
+              type={showPassword ? "text" : "password"}
               {...register("password", { required: true })}
+              endDecorator={
+                <IconButton onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? <Visibility /> : <VisibilityOff />}
+                </IconButton>
+              }
             />
           </FormControl>
         )}
