@@ -63,7 +63,14 @@ export const runStoredProcedure = ({
   parameters,
   resultCallback,
 }) => {
-  const sql = `CALL ${procedure}(${parameters.join(", ")});`;
+  const sql = `CALL ${procedure}(${parameters
+    .map((parameter) => {
+      const type = typeof parameter;
+      if (type === "string") return `'${parameter}'`;
+      if (type === "boolean") return parameter ? 1 : 0;
+      return parameter;
+    })
+    .join(", ")});`;
   queryDb(() => query({ query: sql, resultCallback }));
 };
 
