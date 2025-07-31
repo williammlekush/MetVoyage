@@ -64,6 +64,8 @@ export default function Auth() {
               setAuthState(AuthState.SIGN_IN_PASSWORD);
           } else if (fromAuthState === AuthState.CREATE_NAME)
             setAuthState(AuthState.CREATE_PASSWORD);
+          else if (fromAuthState === AuthState.SIGN_IN_NAME)
+            setErrorSnackbarMessage("User validation failed. Try again.");
         })
         .catch((error) => setErrorSnackbarMessage(error)),
     [
