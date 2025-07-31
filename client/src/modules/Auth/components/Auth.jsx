@@ -11,7 +11,7 @@ import {
 } from "@mui/joy";
 import { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
-import { createUser, getIsUsernameValid } from "./api";
+import { createUser, getUserExistsByUsername } from "./api";
 import InputValidMessage from "./InputValidMessage";
 
 export default function Auth() {
@@ -36,25 +36,37 @@ export default function Auth() {
     CREATE_NAME: 0,
     CREATE_PASSWORD: 1,
     SIGN_IN_NAME: 2,
+    SIGN_IN_PASSWORD: 3,
   };
 
   const [authState, setAuthState] = useState(AuthState.SIGN_IN_NAME);
   //#endregion
 
   //#region validate username
-  const [invalidUsername, setInvalidUsername] = useState();
-  const [isUsernameValid, setIsUsernameValid] = useState();
+  const [gotUsername, setGotUsername] = useState();
+  const [userExists, setUserExists] = useState();
 
-  const validateUsername = useCallback(
-    async () =>
-      await getIsUsernameValid(username)
+  const checkUserExists = useCallback(
+    async (fromAuthState) =>
+      await getUserExistsByUsername(username)
         .then((response) => {
-          setIsUsernameValid(response.data);
-          if (response.data) setAuthState(AuthState.CREATE_PASSWORD);
-          else setInvalidUsername(username);
+          setUserExists(response.data);
+          if (response.data) {
+            setGotUsername(username);
+
+            if (fromAuthState === AuthState.SIGN_IN_NAME)
+              setAuthState(AuthState.SIGN_IN_PASSWORD);
+          } else if (fromAuthState === AuthState.CREATE_NAME)
+            setAuthState(AuthState.CREATE_PASSWORD);
         })
         .catch((error) => setErrorSnackbarMessage(error)),
-    [AuthState.CREATE_PASSWORD, username]
+    [
+      AuthState.CREATE_NAME,
+      AuthState.CREATE_PASSWORD,
+      AuthState.SIGN_IN_NAME,
+      AuthState.SIGN_IN_PASSWORD,
+      username,
+    ]
   );
 
   const createAccount = useCallback(
@@ -69,6 +81,8 @@ export default function Auth() {
         ),
     [password, username]
   );
+
+  const signIn = useCallback(async () => {}, []);
   //#endregion
 
   return (
@@ -95,11 +109,22 @@ export default function Auth() {
           {[AuthState.CREATE_NAME, AuthState.CREATE_PASSWORD].includes(
             authState
           ) && "Create account"}
-          {[AuthState.SIGN_IN_NAME].includes(authState) && "Sign in"}
+          {[AuthState.SIGN_IN_NAME, AuthState.SIGN_IN_PASSWORD].includes(
+            authState
+          ) && "Sign in"}
         </Typography>
         <FormControl
-          disabled={isUsernameValid && authState === AuthState.CREATE_PASSWORD}
-          error={isUsernameValid === false && username === invalidUsername}
+          disabled={
+            (userExists === false && authState === AuthState.CREATE_PASSWORD) ||
+            (userExists && authState === AuthState.SIGN_IN_PASSWORD)
+          }
+          error={
+            [AuthState.CREATE_NAME, AuthState.CREATE_PASSWORD].includes(
+              authState
+            ) &&
+            userExists &&
+            username === gotUsername
+          }
         >
           <FormLabel>Username</FormLabel>
           <Input
@@ -113,61 +138,70 @@ export default function Auth() {
                 setValue("username", value.trim()),
             })}
           />
-          {isUsernameValid === false && username === invalidUsername && (
-            <FormHelperText>
-              That username is taken.😢 Try again!
-            </FormHelperText>
-          )}
+          {[AuthState.CREATE_NAME, AuthState.CREATE_PASSWORD].includes(
+            authState
+          ) &&
+            userExists &&
+            username === gotUsername && (
+              <FormHelperText>
+                That username is taken.😢 Try again!
+              </FormHelperText>
+            )}
         </FormControl>
-        {isUsernameValid && authState === AuthState.CREATE_PASSWORD && (
-          <FormControl>
-            <FormLabel>Password</FormLabel>
-            <Input
-              variant="outlined"
-              placeholder="Enter a password..."
-              slotProps={{ input: { maxLength: 70 } }}
-              {...register("password", {
-                required: true,
-                min: 8,
-                max: 70,
-                pattern:
-                  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>_\-\\[\]/~`+=;']).{8,}$/,
-                onChange: ({ currentTarget: { value } }) =>
-                  setValue("password", value.trim()),
-              })}
-            />
-            <Box
-              sx={{
-                paddingTop: 0.25,
-                paddingLeft: 1,
-                display: "flex",
-                flexWrap: "wrap",
-                columnGap: 1.25,
-              }}
-            >
-              <InputValidMessage
-                isValid={/[a-z]/.test(password)}
-                message="1 lowercase"
+        {(userExists === false && authState === AuthState.CREATE_PASSWORD) ||
+          (userExists && authState === AuthState.SIGN_IN_PASSWORD && (
+            <FormControl>
+              <FormLabel>Password</FormLabel>
+              <Input
+                variant="outlined"
+                placeholder="Enter a password..."
+                slotProps={{ input: { maxLength: 70 } }}
+                {...register("password", {
+                  required: true,
+                  min: 8,
+                  max: 70,
+                  pattern:
+                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>_\-\\[\]/~`+=;']).{8,}$/,
+                  onChange: ({ currentTarget: { value } }) =>
+                    setValue("password", value.trim()),
+                })}
               />
-              <InputValidMessage
-                isValid={/[A-Z]/.test(password)}
-                message="1 uppercase"
-              />
-              <InputValidMessage
-                isValid={/\d/.test(password)}
-                message="1 number"
-              />
-              <InputValidMessage
-                isValid={/[!@#$%^&*(),.?":{}|<>_\-\\[\]/~`+=;']/.test(password)}
-                message="1 special"
-              />
-              <InputValidMessage
-                isValid={password.length > 8}
-                message="8 characters"
-              />
-            </Box>
-          </FormControl>
-        )}
+              {authState === AuthState.CREATE_PASSWORD && (
+                <Box
+                  sx={{
+                    paddingTop: 0.25,
+                    paddingLeft: 1,
+                    display: "flex",
+                    flexWrap: "wrap",
+                    columnGap: 1.25,
+                  }}
+                >
+                  <InputValidMessage
+                    isValid={/[a-z]/.test(password)}
+                    message="1 lowercase"
+                  />
+                  <InputValidMessage
+                    isValid={/[A-Z]/.test(password)}
+                    message="1 uppercase"
+                  />
+                  <InputValidMessage
+                    isValid={/\d/.test(password)}
+                    message="1 number"
+                  />
+                  <InputValidMessage
+                    isValid={/[!@#$%^&*(),.?":{}|<>_\-\\[\]/~`+=;']/.test(
+                      password
+                    )}
+                    message="1 special"
+                  />
+                  <InputValidMessage
+                    isValid={password.length > 8}
+                    message="8 characters"
+                  />
+                </Box>
+              )}
+            </FormControl>
+          ))}
         <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
           {authState === AuthState.CREATE_NAME && (
             <Button
@@ -191,30 +225,44 @@ export default function Auth() {
             <Button
               variant="solid"
               disabled={username.trim().length === 0}
-              onClick={validateUsername}
+              onClick={() => checkUserExists(authState)}
             >
               Next
             </Button>
           )}
-          {authState === AuthState.CREATE_PASSWORD && (
-            <>
-              <Button
-                variant="plain"
-                onClick={() => {
-                  setIsUsernameValid(undefined);
+          {[AuthState.CREATE_PASSWORD, AuthState.SIGN_IN_PASSWORD].includes(
+            authState
+          ) && (
+            <Button
+              variant="plain"
+              onClick={() => {
+                setUserExists(undefined);
+                if (authState === AuthState.CREATE_PASSWORD)
                   setAuthState(AuthState.CREATE_NAME);
-                }}
-              >
-                Change username
-              </Button>
-              <Button
-                variant="solid"
-                disabled={!password || !!errors.password}
-                onClick={createAccount}
-              >
-                Create
-              </Button>
-            </>
+                if (authState === AuthState.SIGN_IN_PASSWORD)
+                  setAuthState(AuthState.SIGN_IN_NAME);
+              }}
+            >
+              Change username
+            </Button>
+          )}
+          {authState === AuthState.CREATE_PASSWORD && (
+            <Button
+              variant="solid"
+              disabled={!password || !!errors.password}
+              onClick={createAccount}
+            >
+              Create
+            </Button>
+          )}
+          {authState === AuthState.SIGN_IN_PASSWORD && (
+            <Button
+              variant="solid"
+              disabled={!password || !!errors.password}
+              onClick={signIn}
+            >
+              Sign in
+            </Button>
           )}
         </Box>
       </Card>

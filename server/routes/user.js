@@ -3,12 +3,11 @@ import { runStoredProcedure } from "../query.js";
 
 const ROUTER = express.Router();
 
-ROUTER.get("/isUsernameValid", (_request, response) => {
+ROUTER.get("/existsByUsername", (_request, response) => {
   runStoredProcedure({
     procedure: "userExists",
     parameters: [_request.query.userName],
-    resultCallback: (result) =>
-      response.status(200).json(result[0].length === 0),
+    resultCallback: (result) => response.status(200).json(result[0].length > 0),
   });
 });
 
