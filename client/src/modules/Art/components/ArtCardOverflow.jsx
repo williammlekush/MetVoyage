@@ -1,8 +1,7 @@
-import { CardOverflow, IconButton } from "@mui/joy";
-import { MoreVert } from "@mui/icons-material";
+import { CardOverflow} from "@mui/joy";
 import ArtImageLoader from "./ArtImageLoader";
 
-function ArtCardOverflow({ art, isArtLoading, user, favoriteArt }) {
+function ArtCardOverflow({ art, isArtLoading, ButtonComponent }) {
 
     return (
             <CardOverflow>
@@ -12,25 +11,7 @@ function ArtCardOverflow({ art, isArtLoading, user, favoriteArt }) {
                         : undefined}
                     alt={art.publicCaption}
                 />
-                <IconButton
-                    aria-label="Favorite Art"
-                    title="Favorite Art"
-                    onClick={favoriteArt}
-                    size="md"
-                    variant="soft"
-                    color="neutral"
-                    sx={{
-                        position: 'absolute',
-                        zIndex: 10,
-                        borderRadius: '50%',
-                        right: '1rem',
-                        bottom: 0,
-                        transform: 'translateY(50%)',
-                    }}
-                    disabled={user.fav === art.id}
-                >
-                    <MoreVert />
-                </IconButton>
+                {ButtonComponent ? <ButtonComponent /> : null}
             </CardOverflow>
     )
 }

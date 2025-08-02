@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
-import { Box, Card, CardContent, CardOverflow, Divider, IconButton, Snackbar, Tooltip, Typography } from "@mui/joy";
-import { KeyboardDoubleArrowRight, KeyboardDoubleArrowLeft, Loyalty, PlaylistAddCheckCircle } from "@mui/icons-material";
+import { Box, Card, CardContent, CardOverflow, Divider, Dropdown, IconButton, ListItemDecorator, Menu, MenuButton, MenuItem, Snackbar, Tooltip, Typography } from "@mui/joy";
+import { Add, Favorite, KeyboardDoubleArrowRight, KeyboardDoubleArrowLeft, Loyalty, PlaylistAddCheckCircle, MoreVert } from "@mui/icons-material";
 import axios from "axios";
 import ArtCardBasicInfo from "./ArtCardBasicInfo";
 import ArtCardOverflow from "./ArtCardOverflow";
@@ -90,6 +90,40 @@ function ArtCard({ id, user }) {
                                 isArtLoading={isArtLoading}
                                 user={user}
                                 favoriteArt={favoriteArt}
+                                ButtonComponent={() => (
+                                    <Dropdown>
+                                        <MenuButton
+                                            slots={{ root: IconButton }}
+                                            slotProps={{ root: {
+                                                variant: 'solid',
+                                                color: 'neutral',
+                                                size: 'md',
+                                                sx: {
+                                                    position: 'absolute',
+                                                    zIndex: 10,
+                                                    borderRadius: '50%',
+                                                    right: '1rem',
+                                                    bottom: 0,
+                                                    transform: 'translateY(50%)', } } }}
+                                        >
+                                            <MoreVert />
+                                        </MenuButton>
+                                        <Menu placement="right-start">
+                                            <MenuItem>
+                                            <ListItemDecorator>
+                                                <Add />
+                                            </ListItemDecorator>
+                                            Add to itinerary
+                                            </MenuItem>
+                                            <MenuItem disabled={user.fav === art.id} onClick={favoriteArt}>
+                                            <ListItemDecorator>
+                                                <Favorite />
+                                            </ListItemDecorator>
+                                            Favorite Art
+                                            </MenuItem>
+                                        </Menu>
+                                    </Dropdown>
+                                )}
                             />
                             <ArtCardBasicInfo
                                 art={art}
