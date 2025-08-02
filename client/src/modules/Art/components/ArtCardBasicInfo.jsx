@@ -1,5 +1,5 @@
-import { CardContent, CardOverflow, Divider, Tooltip, Typography } from "@mui/joy";
-import { Loyalty, Person, PlaylistAddCheckCircle } from "@mui/icons-material";
+import { CardContent, Tooltip, Typography } from "@mui/joy";
+import { Person } from "@mui/icons-material";
 import capitalize from "../../Shared/utils/stringHelpers";
 
 function ArtCardBasicInfo({ art, artist }) {
