@@ -6,9 +6,14 @@ export default function Header() {
   const { user } = useUser();
 
   return (
-    <Stack direction="row" justifyContent="space-between">
+    <Stack direction="row" justifyContent="space-between" alignItems="center">
       <Logo />
-      <Stack direction="row" justifyContent="flex-end" gap={2}>
+      <Stack
+        direction="row"
+        justifyContent="flex-end"
+        gap={2}
+        alignItems="center"
+      >
         <Typography>{user?.name}</Typography>
         <Avatar variant="soft" size="sm" />
       </Stack>
