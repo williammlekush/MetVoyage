@@ -3,9 +3,10 @@ import { Box, Card, CardContent, CardOverflow, Divider, Dropdown, IconButton, Li
 import { Add, Favorite, KeyboardDoubleArrowRight, KeyboardDoubleArrowLeft, Loyalty, PlaylistAddCheckCircle, MoreVert } from "@mui/icons-material";
 import axios from "axios";
 import ArtCardBasicInfo from "./ArtCardBasicInfo";
+import ArtCardFooter from "./ArtCardFooter";
 import ArtCardOverflow from "./ArtCardOverflow";
 import ArtDetails from "./ArtDetails";
-import { getArt, getArtist } from "../api";
+import { getArt,getArtAggregateData, getArtist } from "../api";
 
 function ArtCard({ id, user }) {
 
@@ -29,6 +30,12 @@ function ArtCard({ id, user }) {
                 const artData = artResponse.data[0][0];
                 setArt(artData);
                 setIsArtLoading(false);
+
+                const artAggregateResponse = await getArtAggregateData(id);
+                if (artAggregateResponse.status === 200) {
+                    artData.favoriteCount = artAggregateResponse.data[0][0].favorite_count;
+                    artData.itineraryCount = artAggregateResponse.data[0][0].itinerary_count;
+                }
 
                 // Use artData directly here
                 if (artData) {
@@ -80,7 +87,9 @@ function ArtCard({ id, user }) {
                 variant="outlined"
                 sx={{
                     width: expanded ? 600: 300,
-                    overflow:'hidden'}}
+                    overflow:'hidden',
+                    pb: 0
+                }}
             >
                 <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%'}}>
                     <Box sx={{ flex: 1}}>
@@ -146,42 +155,11 @@ function ArtCard({ id, user }) {
                         </CardContent>
                     </Box>}
                 </Box>
-                <CardOverflow variant="soft">
-                    <Divider inset="context" />
-                    <CardContent orientation="horizontal">
-                        <Typography 
-                            startDecorator={
-                                <Tooltip title="Number of users who have favorited this artwork">
-                                    <Loyalty />
-                                </Tooltip>
-                            }
-                            level="body-xs"
-                        >
-                            23
-                        </Typography>
-                        <Divider orientation="vertical" />
-                        <Typography startDecorator={
-                                <Tooltip title="Number of users who have this artwork on their itinerary">
-                                    <PlaylistAddCheckCircle />
-                                </Tooltip>
-                            }
-                            level="body-xs"
-                        >
-                            100
-                        </Typography>
-                        <IconButton
-                            aria-label="Artist Info"
-                            title="Artist Info"
-                            onClick={() => setExpanded(!expanded)}
-                            size="md"
-                            variant="soft"
-                            color="neutral"
-                            sx={{ position: 'absolute', bottom: 3, right: 3, zIndex: 10 }}
-                        >
-                            {expanded ? <KeyboardDoubleArrowLeft /> : <KeyboardDoubleArrowRight />}
-                        </IconButton>
-                    </CardContent>
-                </CardOverflow>
+                <ArtCardFooter
+                    art={art}
+                    expanded={expanded}
+                    setExpanded={setExpanded}
+                />
             </Card>
             <Snackbar
                 open={!!apiError}

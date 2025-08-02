@@ -11,6 +11,14 @@ ROUTER.get("/read", (_request, response) => {
   });
 });
 
+ROUTER.get("/read/aggregateData", (_request, response) => {
+  runStoredProcedure({
+    procedure: "getObjectAggregateData",
+    parameters: [_request.query.id],
+    resultCallback: (result) => response.status(200).json(result),
+  });
+});
+
 ROUTER.get("/read/artist", (_request, response) => {
   runStoredProcedure({
     procedure: "loadObjectArtists",
