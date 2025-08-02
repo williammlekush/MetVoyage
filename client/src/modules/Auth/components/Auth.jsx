@@ -20,6 +20,8 @@ import {
 import InputValidMessage from "./InputValidMessage";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { usePending } from "../../Shared/hooks/usePending";
+import { useNavigate } from "react-router-dom";
+import { RELATIVE_URL } from "../../../Router";
 
 export default function Auth() {
   //#region user feedback
@@ -55,13 +57,25 @@ export default function Auth() {
   const { call, isPending } = usePending();
   //#endregion
 
+  //#region navigate
+  const navigate = useNavigate();
+
+  const displaySuccessAndNavigate = useCallback(
+    (message) => {
+      setSuccessSnackbarMessage(message);
+      navigate(RELATIVE_URL.OVERVIEW, { replace: true });
+    },
+    [navigate]
+  );
+  //#endregion
+
   //#region validate input
   const [gotUsername, setGotUsername] = useState();
   const [userExists, setUserExists] = useState();
 
   const checkUserExists = useCallback(
     async (fromAuthState) =>
-      await call(getUserExistsByUsername(username))
+      await call(() => getUserExistsByUsername(username))
         .then((response) => {
           setUserExists(response.data);
           if (response.data) {
@@ -88,30 +102,24 @@ export default function Auth() {
 
   const signIn = useCallback(
     async () =>
-      await call(getUserExistsByUsernamePassword(username, password))
-        .then(() => {
-          setSuccessSnackbarMessage("Welcome back!");
-          // navigate to list page
-        })
+      await call(() => getUserExistsByUsernamePassword(username, password))
+        .then(() => displaySuccessAndNavigate("Welcome back!"))
         .catch((error) =>
-          setErrorSnackbarMessage(error.response.data ?? error.message)
+          setErrorSnackbarMessage(error?.response?.data ?? error.message)
         ),
-    [call, password, username]
+    [call, displaySuccessAndNavigate, password, username]
   );
   //#endregion
 
   //#region create user
   const createAccount = useCallback(
     async () =>
-      await call(createUser(username, password))
-        .then(() => {
-          setSuccessSnackbarMessage("User created! Welcome!");
-          // navigate to list page
-        })
+      await call(() => createUser(username, password))
+        .then(() => displaySuccessAndNavigate("Account created! Welcome!"))
         .catch((error) =>
-          setErrorSnackbarMessage(error.response.data ?? error.message)
+          setErrorSnackbarMessage(error?.response?.data ?? error.message)
         ),
-    [call, password, username]
+    [call, displaySuccessAndNavigate, password, username]
   );
 
   //#endregion

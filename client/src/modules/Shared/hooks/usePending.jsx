@@ -16,10 +16,10 @@ export function usePending() {
     setPendingCount(pendingRef.current);
   };
 
-  const call = async (promise) => {
+  const call = async (callback) => {
     increment();
     try {
-      return promise;
+      return await callback();
     } finally {
       decrement();
     }
