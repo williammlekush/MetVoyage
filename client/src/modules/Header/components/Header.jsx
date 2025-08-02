@@ -1,20 +1,18 @@
-import { Avatar, Stack, Typography } from "@mui/joy";
-import { useUser } from "../../Shared/hooks/useUser";
+import { Avatar, Button, Stack, Typography } from "@mui/joy";
 import Logo from "../../Shared/components/Logo";
+import DisplayName from "./DisplayName";
 
 export default function Header() {
-  const { user } = useUser();
-
   return (
     <Stack direction="row" justifyContent="space-between" alignItems="center">
       <Logo />
       <Stack
         direction="row"
         justifyContent="flex-end"
-        gap={2}
+        gap={1}
         alignItems="center"
       >
-        <Typography>{user?.name}</Typography>
+        <DisplayName />
         <Avatar variant="soft" size="sm" />
       </Stack>
     </Stack>

@@ -39,10 +39,22 @@ ROUTER.post("/create", (_request, response) => {
       if (data.length === 1) response.status(200).json(data[0]);
       else
         response
-          .status(401)
+          .status(409)
           .json(
             "User could not be created. Try again with a different username."
           );
+    },
+  });
+});
+
+ROUTER.post("/updateDisplayName", (_request, response) => {
+  runStoredProcedure({
+    procedure: "updateUserDisplayName",
+    parameters: [_request.body.userId, _request.body.name],
+    resultCallback: (result) => {
+      const success = result.affectedRows > 0;
+      if (success) response.status(200).json(success);
+      else response.status(409).json("Display name update failed.");
     },
   });
 });
