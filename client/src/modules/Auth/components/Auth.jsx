@@ -22,6 +22,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { usePending } from "../../Shared/hooks/usePending";
 import { useNavigate } from "react-router-dom";
 import { RELATIVE_URL } from "../../../Router";
+import { useUser } from "../../Shared/hooks/useUser";
 
 export default function Auth() {
   //#region user feedback
@@ -57,15 +58,20 @@ export default function Auth() {
   const { call, isPending } = usePending();
   //#endregion
 
+  //#region user state
+  const { setUser } = useUser();
+  //#endregion
+
   //#region navigate
   const navigate = useNavigate();
 
   const displaySuccessAndNavigate = useCallback(
     (message) => {
       setSuccessSnackbarMessage(message);
+      setUser({ id: 0 });
       navigate(RELATIVE_URL.OVERVIEW, { replace: true });
     },
-    [navigate]
+    [navigate, setUser]
   );
   //#endregion
 
