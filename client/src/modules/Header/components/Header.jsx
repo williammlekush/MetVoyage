@@ -1,6 +1,7 @@
 import { Avatar, Button, Stack, Typography } from "@mui/joy";
 import Logo from "../../Shared/components/Logo";
 import DisplayName from "./DisplayName";
+import UserAvatar from "./UserAvatar";
 
 export default function Header() {
   return (
@@ -13,7 +14,7 @@ export default function Header() {
         alignItems="center"
       >
         <DisplayName />
-        <Avatar variant="soft" size="sm" />
+        <UserAvatar />
       </Stack>
     </Stack>
   );

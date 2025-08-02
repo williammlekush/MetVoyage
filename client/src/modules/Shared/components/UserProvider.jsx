@@ -17,7 +17,7 @@ export default function UserProvider({ children }) {
       setUser({
         id: userFromDb.id,
         name: userFromDb.display_name,
-        favorite: userFromDb.favorite_obj_id,
+        favorite: userFromDb.url,
       }),
     []
   );
