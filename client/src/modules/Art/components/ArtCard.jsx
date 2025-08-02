@@ -136,11 +136,6 @@ function ArtCard({ id, user }) {
                             <ArtCardBasicInfo
                                 art={art}
                                 artist={artist}
-                                isArtLoading={isArtLoading}
-                                user={user}
-                                favoriteArt={favoriteArt}
-                                expanded={expanded}
-                                setExpanded={setExpanded}
                             />
                         </CardOverflow>
                     </Box>

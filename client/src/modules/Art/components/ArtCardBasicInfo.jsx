@@ -2,7 +2,7 @@ import { CardContent, CardOverflow, Divider, Tooltip, Typography } from "@mui/jo
 import { Loyalty, Person, PlaylistAddCheckCircle } from "@mui/icons-material";
 import capitalize from "../../Shared/utils/stringHelpers";
 
-function ArtCardBasicInfo({ art, artist, }) {
+function ArtCardBasicInfo({ art, artist }) {
     const artistCaption =
         capitalize((artist.artist_prefix ? artist.artist_prefix + " " : "") + artist.name);
 
