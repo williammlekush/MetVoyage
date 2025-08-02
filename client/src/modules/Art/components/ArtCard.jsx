@@ -98,8 +98,6 @@ function ArtCard({ id, user }) {
                             <ArtCardOverflow
                                 art={art}
                                 isArtLoading={isArtLoading}
-                                user={user}
-                                favoriteArt={favoriteArt}
                                 ButtonComponent={() => (
                                     <Dropdown>
                                         <MenuButton
