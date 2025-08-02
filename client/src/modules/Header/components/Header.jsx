@@ -8,7 +8,10 @@ export default function Header() {
   return (
     <Stack direction="row" justifyContent="space-between">
       <Logo />
-      <Typography>{user?.id ?? "red"}</Typography>
+      <Stack direction="row" justifyContent="flex-end" gap={2}>
+        <Typography>{user?.name}</Typography>
+        <Typography>{user?.favorite}</Typography>
+      </Stack>
     </Stack>
   );
 }

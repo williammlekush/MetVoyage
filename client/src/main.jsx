@@ -1,8 +1,8 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import Router from "./Router.jsx";
-import { Box, CssBaseline, CssVarsProvider, Sheet } from "@mui/joy";
-import { UserProvider } from "./modules/Shared/components/UserProvider.jsx";
+import { CssBaseline, CssVarsProvider, Sheet } from "@mui/joy";
+import UserProvider from "./modules/Shared/components/UserProvider.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

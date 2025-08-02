@@ -23,6 +23,7 @@ import { usePending } from "../../Shared/hooks/usePending";
 import { useNavigate } from "react-router-dom";
 import { RELATIVE_URL } from "../../../Router";
 import { useUser } from "../../Shared/hooks/useUser";
+import Logo from "../../Shared/components/Logo";
 
 export default function Auth() {
   //#region user feedback
@@ -59,7 +60,7 @@ export default function Auth() {
   //#endregion
 
   //#region user state
-  const { setUser } = useUser();
+  const { setUserFromDb } = useUser();
   //#endregion
 
   //#region navigate
@@ -68,10 +69,10 @@ export default function Auth() {
   const onSuccess = useCallback(
     (user, message) => {
       setSuccessSnackbarMessage(message);
-      setUser(user);
+      setUserFromDb(user);
       navigate(RELATIVE_URL.OVERVIEW);
     },
-    [navigate, setUser]
+    [navigate, setUserFromDb]
   );
   //#endregion
 
