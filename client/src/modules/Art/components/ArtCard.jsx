@@ -16,7 +16,6 @@ function ArtCard({ id, user }) {
     const [expanded, setExpanded] = useState(false);
 
     const [apiError, setApiError] = useState();
-    const [message, setMessage] = useState("");
 
     const [isArtLoading, setIsArtLoading] = useState(true);
     // #endregion
@@ -85,7 +84,7 @@ function ArtCard({ id, user }) {
                                 art={art}
                                 isArtLoading={isArtLoading}
                                 ButtonComponent={() => (
-                                    <OverviewAction art={art} user={user}/>
+                                    <OverviewAction art={art} user={user} setApiError={setApiError} />
                                 )}
                             />
                             <ArtCardBasicInfo
@@ -118,15 +117,6 @@ function ArtCard({ id, user }) {
                 variant="soft"
             >
                 {apiError}
-            </Snackbar>
-            <Snackbar
-                open={!!message}
-                onClose={() => setMessage(null)}
-                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-                color="success"
-                variant="soft"
-            >
-                {message}
             </Snackbar>
         </>
     );

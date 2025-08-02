@@ -1,6 +1,6 @@
 import { CardContent, Tooltip, Typography } from "@mui/joy";
 import { Person } from "@mui/icons-material";
-import capitalize from "../../Shared/utils/stringHelpers";
+import { capitalize } from "../../Shared/utils/stringHelpers";
 
 function ArtCardBasicInfo({ art, artist }) {
     const artistCaption =
