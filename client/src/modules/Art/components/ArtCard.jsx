@@ -20,6 +20,8 @@ function ArtCard({ id, user }) {
     const [message, setMessage] = useState("");
 
     const [isArtLoading, setIsArtLoading] = useState(true);
+
+    const isFavoriteDisabled = user.fav === art.id
     // #endregion
 
     // #region API calls
@@ -116,16 +118,16 @@ function ArtCard({ id, user }) {
                                         >
                                             <MoreVert />
                                         </MenuButton>
-                                        <Menu placement="right-start">
+                                        <Menu placement="left-start">
                                             <MenuItem>
                                             <ListItemDecorator>
                                                 <Add />
                                             </ListItemDecorator>
                                             Add to itinerary
                                             </MenuItem>
-                                            <MenuItem disabled={user.fav === art.id} onClick={favoriteArt}>
+                                            <MenuItem disabled={isFavoriteDisabled} onClick={favoriteArt}>
                                             <ListItemDecorator>
-                                                <Favorite />
+                                                <Favorite color={isFavoriteDisabled ? "neutral" :"danger"}/>
                                             </ListItemDecorator>
                                             Favorite Art
                                             </MenuItem>
