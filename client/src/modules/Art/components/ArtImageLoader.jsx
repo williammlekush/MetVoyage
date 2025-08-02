@@ -5,7 +5,7 @@ function ArtImageLoader({ src, alt }) {
     const [isLoading, setIsLoading] = useState(true);
     
   return (
-    <Box sx={{ position: "relative", width: 400, height: 300 }}>
+    <Box sx={{ position: "relative", height: "100%", width: "296px", minHeight: "200px" }}>
       <Skeleton loading={isLoading}>
         <Box
           component="img"

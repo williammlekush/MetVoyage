@@ -9,7 +9,7 @@ function ArtDetails({ art, artist }) {
     { label: "Dimensions", value: art.dimensions },
     { label: "Classification", value: art.classification },
     { label: "Credit Line", value: art.credit_line },
-    { label: "Object Number", value: art.number },
+    { label: "Number", value: art.number },
   ];
 
   const artistDetails = [
@@ -30,7 +30,7 @@ function ArtDetails({ art, artist }) {
   ];
 
   return (
-    <Tabs orientation="vertical" defaultValue={0}>
+    <Tabs defaultValue={0}>
       <TabList>
         <Tab>Description</Tab>
         <Tab>Artist</Tab>
