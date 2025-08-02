@@ -3,13 +3,14 @@ import cors from "cors";
 import dotenv from "dotenv";
 import HELLO from "./routes/hello.js";
 import OBJECT from "./routes/object.js";
+import USER from "./routes/user.js";
 import { buildDb, buildStoredProcedures, connect } from "./query.js";
 
 dotenv.config();
 
 connect();
 
-//await buildDb(); // Comment out to avoid re-building the database every time
+// await buildDb(); // Comment out to avoid re-building the database every time
 buildStoredProcedures(); // Comment out to avoid re-building stored procedures every time
 
 // // Example data retrieval.
@@ -24,6 +25,7 @@ APP.use(express.json());
 
 APP.use("/api/hello", HELLO);
 APP.use("/api/object", OBJECT);
+APP.use("/api/user", USER);
 
 const PORT = process.env.PORT || 5000;
 APP.listen(PORT, () =>
