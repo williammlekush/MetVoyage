@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form";
 import {
   createUser,
   getUserExistsByUsername,
-  getUserExistsByUsernamePassword,
+  getUserByUsernamePassword,
 } from "./api";
 import InputValidMessage from "./InputValidMessage";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
@@ -65,11 +65,11 @@ export default function Auth() {
   //#region navigate
   const navigate = useNavigate();
 
-  const displaySuccessAndNavigate = useCallback(
-    (message) => {
+  const onSuccess = useCallback(
+    (user, message) => {
       setSuccessSnackbarMessage(message);
-      setUser({ id: 0 });
-      navigate(RELATIVE_URL.OVERVIEW, { replace: true });
+      setUser(user);
+      navigate(RELATIVE_URL.OVERVIEW);
     },
     [navigate, setUser]
   );
@@ -108,12 +108,12 @@ export default function Auth() {
 
   const signIn = useCallback(
     async () =>
-      await call(() => getUserExistsByUsernamePassword(username, password))
-        .then(() => displaySuccessAndNavigate("Welcome back!"))
+      await call(() => getUserByUsernamePassword(username, password))
+        .then((response) => onSuccess(response.data, "Welcome back!"))
         .catch((error) =>
           setErrorSnackbarMessage(error?.response?.data ?? error.message)
         ),
-    [call, displaySuccessAndNavigate, password, username]
+    [call, onSuccess, password, username]
   );
   //#endregion
 
@@ -121,11 +121,13 @@ export default function Auth() {
   const createAccount = useCallback(
     async () =>
       await call(() => createUser(username, password))
-        .then(() => displaySuccessAndNavigate("Account created! Welcome!"))
+        .then((response) =>
+          onSuccess(response.data, "Account created! Welcome!")
+        )
         .catch((error) =>
           setErrorSnackbarMessage(error?.response?.data ?? error.message)
         ),
-    [call, displaySuccessAndNavigate, password, username]
+    [call, onSuccess, password, username]
   );
 
   //#endregion

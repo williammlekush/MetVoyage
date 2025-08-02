@@ -18,14 +18,14 @@ ROUTER.get("/existsByUsername", (_request, response) => {
   });
 });
 
-ROUTER.get("/existsByUsernamePassword", (_request, response) => {
+ROUTER.get("/readIdByUsernamePassword", (_request, response) => {
   runStoredProcedure({
     procedure: "signIn",
     parameters: [_request.query.userName, hashSha256(_request.query.passWord)],
     resultCallback: (result) => {
-      const success = result[0].length === 1;
-      if (success) response.status(200).json(success);
-      else response.status(401).json("Sign in failed. Try again.");
+      const data = result[0];
+      if (data.length === 1) response.status(200).json(data[0]);
+      else response.status(403).json("Sign in failed. Try again.");
     },
   });
 });
@@ -35,13 +35,14 @@ ROUTER.post("/create", (_request, response) => {
     procedure: "insertUser",
     parameters: [_request.body.userName, hashSha256(_request.body.passWord)],
     resultCallback: (result) => {
-      if (result.affectedRows === 0)
+      const data = result[0];
+      if (data.length === 1) response.status(200).json(data[0]);
+      else
         response
-          .status(409)
+          .status(401)
           .json(
             "User could not be created. Try again with a different username."
           );
-      else response.status(200).json(result);
     },
   });
 });
