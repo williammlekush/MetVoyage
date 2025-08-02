@@ -19,10 +19,13 @@ import {
 } from "./api";
 import InputValidMessage from "./InputValidMessage";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { usePending } from "../../Shared/hooks/usePending";
 
 export default function Auth() {
+  //#region user feedback
   const [errorSnackbarMessage, setErrorSnackbarMessage] = useState();
   const [successSnackbarMessage, setSuccessSnackbarMessage] = useState();
+  //#endregion
 
   //#region form state
   const {
@@ -48,13 +51,17 @@ export default function Auth() {
   const [authState, setAuthState] = useState(AuthState.SIGN_IN_NAME);
   //#endregion
 
+  //#region api call state
+  const { call, isPending } = usePending();
+  //#endregion
+
   //#region validate input
   const [gotUsername, setGotUsername] = useState();
   const [userExists, setUserExists] = useState();
 
   const checkUserExists = useCallback(
     async (fromAuthState) =>
-      await getUserExistsByUsername(username)
+      await call(getUserExistsByUsername(username))
         .then((response) => {
           setUserExists(response.data);
           if (response.data) {
@@ -68,18 +75,20 @@ export default function Auth() {
             setErrorSnackbarMessage("User validation failed. Try again.");
         })
         .catch((error) => setErrorSnackbarMessage(error)),
+
     [
       AuthState.CREATE_NAME,
       AuthState.CREATE_PASSWORD,
       AuthState.SIGN_IN_NAME,
       AuthState.SIGN_IN_PASSWORD,
+      call,
       username,
     ]
   );
 
   const signIn = useCallback(
     async () =>
-      await getUserExistsByUsernamePassword(username, password)
+      await call(getUserExistsByUsernamePassword(username, password))
         .then(() => {
           setSuccessSnackbarMessage("Welcome back!");
           // navigate to list page
@@ -87,14 +96,14 @@ export default function Auth() {
         .catch((error) =>
           setErrorSnackbarMessage(error.response.data ?? error.message)
         ),
-    [password, username]
+    [call, password, username]
   );
   //#endregion
 
   //#region create user
   const createAccount = useCallback(
     async () =>
-      await createUser(username, password)
+      await call(createUser(username, password))
         .then(() => {
           setSuccessSnackbarMessage("User created! Welcome!");
           // navigate to list page
@@ -102,8 +111,9 @@ export default function Auth() {
         .catch((error) =>
           setErrorSnackbarMessage(error.response.data ?? error.message)
         ),
-    [password, username]
+    [call, password, username]
   );
+
   //#endregion
 
   //#region show/hide pass char
@@ -140,6 +150,7 @@ export default function Auth() {
         </Typography>
         <FormControl
           disabled={
+            isPending ||
             (userExists === false && authState === AuthState.CREATE_PASSWORD) ||
             (userExists && authState === AuthState.SIGN_IN_PASSWORD)
           }
@@ -175,7 +186,7 @@ export default function Auth() {
         </FormControl>
 
         {authState === AuthState.CREATE_PASSWORD && (
-          <FormControl>
+          <FormControl disabled={isPending}>
             <FormLabel>Password</FormLabel>
             <Input
               variant="outlined"
@@ -224,7 +235,7 @@ export default function Auth() {
           </FormControl>
         )}
         {authState === AuthState.SIGN_IN_PASSWORD && (
-          <FormControl>
+          <FormControl disabled={isPending}>
             <FormLabel>Password</FormLabel>
             <Input
               variant="outlined"
@@ -233,7 +244,10 @@ export default function Auth() {
               type={showPassword ? "text" : "password"}
               {...register("password", { required: true })}
               endDecorator={
-                <IconButton onClick={() => setShowPassword(!showPassword)}>
+                <IconButton
+                  onClick={() => setShowPassword(!showPassword)}
+                  disabled={isPending}
+                >
                   {showPassword ? <Visibility /> : <VisibilityOff />}
                 </IconButton>
               }
@@ -245,6 +259,7 @@ export default function Auth() {
             <Button
               variant="plain"
               onClick={() => setAuthState(AuthState.SIGN_IN_NAME)}
+              loading={isPending}
             >
               Sign in
             </Button>
@@ -253,6 +268,7 @@ export default function Auth() {
             <Button
               variant="plain"
               onClick={() => setAuthState(AuthState.CREATE_NAME)}
+              loading={isPending}
             >
               Create account
             </Button>
@@ -264,6 +280,7 @@ export default function Auth() {
               variant="solid"
               disabled={username.trim().length === 0}
               onClick={() => checkUserExists(authState)}
+              loading={isPending}
             >
               Next
             </Button>
@@ -280,6 +297,7 @@ export default function Auth() {
                 if (authState === AuthState.SIGN_IN_PASSWORD)
                   setAuthState(AuthState.SIGN_IN_NAME);
               }}
+              loading={isPending}
             >
               Change username
             </Button>
@@ -289,6 +307,7 @@ export default function Auth() {
               variant="solid"
               disabled={!password || !!errors.password}
               onClick={createAccount}
+              loading={isPending}
             >
               Create
             </Button>
@@ -298,6 +317,7 @@ export default function Auth() {
               variant="solid"
               disabled={!password || !!errors.password}
               onClick={signIn}
+              loading={isPending}
             >
               Sign in
             </Button>
