@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
-import { Box, Card, CardContent, CardOverflow, Divider, Dropdown, IconButton, ListItemDecorator, Menu, MenuButton, MenuItem, Snackbar, Tooltip, Typography } from "@mui/joy";
-import { Add, Favorite, KeyboardDoubleArrowRight, KeyboardDoubleArrowLeft, Loyalty, PlaylistAddCheckCircle, MoreVert } from "@mui/icons-material";
+import { Box, Card, CardContent, CardOverflow, Divider, Dropdown, IconButton, ListItemDecorator, Menu, MenuButton, MenuItem, Snackbar } from "@mui/joy";
+import { Add, Favorite, MoreVert } from "@mui/icons-material";
 import axios from "axios";
 import ArtCardBasicInfo from "./ArtCardBasicInfo";
 import ArtCardFooter from "./ArtCardFooter";
