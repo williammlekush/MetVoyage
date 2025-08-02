@@ -153,9 +153,7 @@ export default function Auth() {
           gap: 2,
         }}
       >
-        <Typography level="title-lg" color="primary">
-          MetVoyage
-        </Typography>
+        <Logo />
         <Typography level="h1">
           {[AuthState.CREATE_NAME, AuthState.CREATE_PASSWORD].includes(
             authState
