@@ -28,14 +28,15 @@ function ArtCard({ id, user }) {
             const artResponse = await getArt(id);
             if (artResponse.status === 200) {
                 const artData = artResponse.data[0][0];
-                setArt(artData);
-                setIsArtLoading(false);
 
                 const artAggregateResponse = await getArtAggregateData(id);
                 if (artAggregateResponse.status === 200) {
                     artData.favoriteCount = artAggregateResponse.data[0][0].favorite_count;
                     artData.itineraryCount = artAggregateResponse.data[0][0].itinerary_count;
                 }
+
+                setArt(artData);
+                setIsArtLoading(false);
 
                 // Use artData directly here
                 if (artData) {
