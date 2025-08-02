@@ -9,7 +9,8 @@ function OverviewAction({ art, user, setApiError}) {
 
     // #region state
     const isFavoriteDisabled = user.fav === art.id;
-    const [itineraryLookups, setItineraryLookups] = useState([]);
+    const newItinerary = { id: -1, date: "", can_add: 1 };
+    const [itineraryLookups, setItineraryLookups] = useState([newItinerary]);
     const [message, setMessage] = useState("");
     const [modalOpen, setModalOpen] = useState(false);
     const handleOpenModal = () => setModalOpen(true);
@@ -95,12 +96,18 @@ function OverviewAction({ art, user, setApiError}) {
             >
                 <Box>
                     <Typography level="h3">
-                        Select an itinerary to add {art.title} to.
+                        Select an itinerary to add the {art.title} to.
                     </Typography>
                     <Autocomplete
                         options={itineraryLookups}
                         getOptionDisabled={(option) => option.can_add === 0}
-                        getOptionLabel={(option) => "Trip on " + formatDate(option.date) + (option.can_add === 0 ? " (Already added)" : "")}
+                        getOptionLabel={(option) => (
+                            "Trip on " +
+                            formatDate(option.date) +
+                            (option.can_add === 0
+                                ? " (Already added)"
+                                : "")
+                        )}
                         selectOnFocus
                         clearOnBlur
                     />
