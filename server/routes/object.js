@@ -27,6 +27,14 @@ ROUTER.get("/read/artist", (_request, response) => {
   });
 });
 
+ROUTER.get("/read/itineraries", (_request, response) => {
+  runStoredProcedure({
+    procedure: "getItineraries",
+    parameters: [_request.query.userId, _request.query.objectId],
+    resultCallback: (result) => response.status(200).json(result),
+  });
+});
+
 ROUTER.post("/favorite", (_request, response) => {
   runStoredProcedure({
     procedure: "updateFavorite",

@@ -7,3 +7,6 @@ export const getArtist = (objectId) =>
 
 export const getArtAggregateData = (id) =>
   axios.get(`/api/object/read/aggregateData`, { params: { id } });
+
+export const getItineraries = (userId, objectId) =>
+  axios.get(`/api/object/read/itineraries`, { params: { userId, objectId } });

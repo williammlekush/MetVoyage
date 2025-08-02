@@ -1,12 +1,11 @@
 import { useState, useCallback, useEffect } from "react";
-import { Box, Card, CardContent, CardOverflow, Divider, Dropdown, IconButton, ListItemDecorator, Menu, MenuButton, MenuItem, Snackbar } from "@mui/joy";
-import { Add, Favorite, MoreVert } from "@mui/icons-material";
-import axios from "axios";
+import { Box, Card, CardContent, CardOverflow, Divider, Snackbar } from "@mui/joy";
 import ArtCardBasicInfo from "./ArtCardBasicInfo";
 import ArtCardFooter from "./ArtCardFooter";
 import ArtCardOverflow from "./ArtCardOverflow";
 import ArtDetails from "./ArtDetails";
-import { getArt,getArtAggregateData, getArtist } from "../api";
+import OverviewAction from "./OverviewAction";
+import { getArt, getArtAggregateData, getArtist } from "../api";
 
 function ArtCard({ id, user }) {
 
@@ -20,8 +19,6 @@ function ArtCard({ id, user }) {
     const [message, setMessage] = useState("");
 
     const [isArtLoading, setIsArtLoading] = useState(true);
-
-    const isFavoriteDisabled = user.fav === art.id
     // #endregion
 
     // #region API calls
@@ -59,19 +56,6 @@ function ArtCard({ id, user }) {
             setIsArtLoading(false);
         }
     }, []);
-
-    const favoriteArt = useCallback(async () => {
-        await axios
-            .post("/api/object/favorite", { id: user.id, objectId: art.id })
-            .then((response) => {
-            if (response.status === 200 && response.data[0][0].affected_rows > 0) {
-                setMessage("Art favorited successfully.");
-            } else {
-                setApiError("Art not favorited :-(");
-            }
-            })
-            .catch((error) => setApiError(error));
-    }, [art.id, user.id]);
     // #endregion
 
     // #region useEffects
@@ -101,38 +85,7 @@ function ArtCard({ id, user }) {
                                 art={art}
                                 isArtLoading={isArtLoading}
                                 ButtonComponent={() => (
-                                    <Dropdown>
-                                        <MenuButton
-                                            slots={{ root: IconButton }}
-                                            slotProps={{ root: {
-                                                variant: 'solid',
-                                                color: 'neutral',
-                                                size: 'md',
-                                                sx: {
-                                                    position: 'absolute',
-                                                    zIndex: 10,
-                                                    borderRadius: '50%',
-                                                    right: '1rem',
-                                                    bottom: 0,
-                                                    transform: 'translateY(50%)', } } }}
-                                        >
-                                            <MoreVert />
-                                        </MenuButton>
-                                        <Menu placement="left-start">
-                                            <MenuItem>
-                                            <ListItemDecorator>
-                                                <Add />
-                                            </ListItemDecorator>
-                                            Add to itinerary
-                                            </MenuItem>
-                                            <MenuItem disabled={isFavoriteDisabled} onClick={favoriteArt}>
-                                            <ListItemDecorator>
-                                                <Favorite color={isFavoriteDisabled ? "neutral" :"danger"}/>
-                                            </ListItemDecorator>
-                                            Favorite Art
-                                            </MenuItem>
-                                        </Menu>
-                                    </Dropdown>
+                                    <OverviewAction art={art} user={user}/>
                                 )}
                             />
                             <ArtCardBasicInfo
