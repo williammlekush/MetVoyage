@@ -108,15 +108,19 @@ function ItineraryModal({ art, user, itineraryLookups, modalOpen, handleCloseMod
                         filterOptions={(options, params) => {
                             const filtered = filter(options, params);
                             if (isValidDate(params.inputValue)
-                                && isFutureDateString(params.inputValue)) {
+                                && isFutureDateString(params.inputValue)
+                                && !filtered.some(option => formatDate(option.date) === params.inputValue)) {
                                 filtered.push({
                                     id: 0,
                                     date: params.inputValue + "T00:00:00",
                                     can_add: 1
                                 });
-                            } else if (params.inputValue !== ""){
+                            } else if (params.inputValue !== ""
+                                && !filtered.some(option => formatDate(option.date) === params.inputValue)
+                            ) {
                                 filtered.push({
                                     id: -1,
+                                    date: isValidDate(params.inputValue) ? params.inputValue + "T00:00:00" : "",
                                     can_add: 0
                                 });
                             }
