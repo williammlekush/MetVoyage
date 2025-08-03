@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { FiltersContext } from "../hooks/useFilters";
-import Filter from "./Filter";
+import Filter from "./Filter/Filter";
 import {
   Castle,
   Category,
@@ -40,7 +40,8 @@ export default function FiltersProvider({ children }) {
           id: "title",
           Icon: <Title {...iconProps} />,
           label: "Title",
-          getOptions: () => getObjectOptions("titles"),
+          getOptions: () => getObjectOptions("Titles"),
+          getOptionLabel: ({ title }) => title,
           tooltip: "Filter by title of the object",
         },
         {
@@ -48,13 +49,15 @@ export default function FiltersProvider({ children }) {
           Icon: <Face {...iconProps} />,
           label: "Artist",
           getOptions: getArtistOptions,
+          getOptionLabel: ({ name }) => name,
           tooltip: "Filter by the artist associated with the object",
         },
         {
           id: "medium",
           Icon: <Draw {...iconProps} />,
           label: "Medium",
-          getOptions: () => getObjectOptions("media"),
+          getOptions: () => getObjectOptions("Media"),
+          getOptionLabel: ({ medium }) => medium,
           tooltip: "Filter by the material or medium used to create the object",
         },
       ],
@@ -70,21 +73,24 @@ export default function FiltersProvider({ children }) {
           id: "name",
           Icon: <Category {...iconProps} />,
           label: "Name",
-          getOptions: () => getObjectOptions("names"),
+          getOptions: () => getObjectOptions("Names"),
+          getOptionLabel: ({ name }) => name,
           tooltip: "Filter by the name of the generic object",
         },
         {
           id: "classification",
           Icon: <TypeSpecimen {...iconProps} />,
           label: "Classification",
-          getOptions: () => getObjectOptions("classifications"),
+          getOptions: () => getObjectOptions("Classifications"),
+          getOptionLabel: ({ classification }) => classification,
           tooltip: "Filter by the object's classification or type",
         },
         {
           id: "department",
           Icon: <Museum {...iconProps} />,
           label: "Department",
-          getOptions: () => getObjectOptions("departments"),
+          getOptions: () => getObjectOptions("Departments"),
+          getOptionLabel: ({ department }) => department,
           tooltip: "Filter by the museum department responsible for the object",
         },
       ],
@@ -100,7 +106,8 @@ export default function FiltersProvider({ children }) {
           id: "city",
           Icon: <LocationCity {...iconProps} />,
           label: "City",
-          getOptions: () => getObjectOptions("cities"),
+          getOptions: () => getObjectOptions("Cities"),
+          getOptionLabel: ({ city }) => city,
           tooltip:
             "Filter by the city where the object originated or was found",
         },
@@ -108,21 +115,24 @@ export default function FiltersProvider({ children }) {
           id: "country",
           Icon: <Flag {...iconProps} />,
           label: "Country",
-          getOptions: () => getObjectOptions("countries"),
+          getOptions: () => getObjectOptions("Countries"),
+          getOptionLabel: ({ country }) => country,
           tooltip: "Filter by the country of origin or discovery",
         },
         {
           id: "region",
           Icon: <SouthAmerica {...iconProps} />,
           label: "Region",
-          getOptions: () => getObjectOptions("regions"),
+          getOptions: () => getObjectOptions("Regions"),
+          getOptionLabel: ({ region }) => region,
           tooltip: "Filter by the broader region related to the object",
         },
         {
           id: "culture",
           Icon: <Celebration {...iconProps} />,
           label: "Culture",
-          getOptions: () => getObjectOptions("cultures"),
+          getOptions: () => getObjectOptions("Cultures"),
+          getOptionLabel: ({ culture }) => culture,
           tooltip: "Filter by the culture associated with the object",
         },
       ],
@@ -138,21 +148,24 @@ export default function FiltersProvider({ children }) {
           id: "period",
           Icon: <Timeline {...iconProps} />,
           label: "Period",
-          getOptions: () => getObjectOptions("periods"),
+          getOptions: () => getObjectOptions("Periods"),
+          getOptionLabel: ({ period }) => period,
           tooltip: "Filter by the historical period of the object",
         },
         {
           id: "dynasty",
           Icon: <Diversity3 {...iconProps} />,
           label: "Dynasty",
-          getOptions: () => getObjectOptions("dynasties"),
+          getOptions: () => getObjectOptions("Dynasties"),
+          getOptionLabel: ({ dynasty }) => dynasty,
           tooltip: "Filter by the dynasty associated with the object",
         },
         {
           id: "reign",
           Icon: <Castle {...iconProps} />,
           label: "Reign",
-          getOptions: () => getObjectOptions("reigns"),
+          getOptions: () => getObjectOptions("Reigns"),
+          getOptionLabel: ({ reign }) => reign,
           tooltip: "Filter by the reign of a ruler or era",
         },
       ],
@@ -191,7 +204,7 @@ export default function FiltersProvider({ children }) {
               <AccordionDetails>
                 <Stack direction="row" spacing={2} useFlexGap flexWrap="wrap">
                   {filters.map((filter) => (
-                    <Filter key={filter.id} {...filter} />
+                    <Filter {...filter} />
                   ))}
                 </Stack>
               </AccordionDetails>

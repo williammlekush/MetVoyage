@@ -7,7 +7,7 @@ export default function Overview() {
     <Stack direction="column" spacing={2}>
       <Header />
       <Divider sx={{ "--Divider-childPosition": "5%" }}>
-        Discover the Met's Collection
+        Discover the Met Collection
       </Divider>
       <Search />
     </Stack>

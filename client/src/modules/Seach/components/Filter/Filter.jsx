@@ -1,9 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
-import { usePending } from "../../Shared/hooks/usePending";
-import { useFilters } from "../hooks/useFilters";
+import { usePending } from "../../../Shared/hooks/usePending";
+import { useFilters } from "../../hooks/useFilters";
 import { Autocomplete, CircularProgress, Tooltip } from "@mui/joy";
+import { Listbox } from "./Listbox/Listbox";
 
-export default function Filter({ id, Icon, label, getOptions, tooltip }) {
+export default function Filter({
+  id,
+  Icon,
+  label,
+  getOptions,
+  getOptionLabel,
+  tooltip,
+}) {
   const [options, setOptions] = useState([]);
   const [getFailed, setGetFailed] = useState(false);
 
@@ -27,20 +35,24 @@ export default function Filter({ id, Icon, label, getOptions, tooltip }) {
   return (
     <Tooltip title={tooltip} placement="top-start">
       <Autocomplete
-        mutliple
+        multiple
         id={id}
         placeholder={label}
         noOptionsText={getFailed ? "Failed to load options" : "No options"}
-        options={options}
+        options={options.map((option) => getOptionLabel(option))}
+        renderOption={(props, option) => [props, option]}
         limitTags={3}
         size="sm"
-        sx={{ maxWidth: "160px", fontSize: "xs" }}
+        sx={{ fontSize: "xs" }}
+        slots={{ listbox: Listbox }}
         startDecorator={Icon}
         endDecorator={
           isPending ? (
             <CircularProgress
               size="sm"
               sx={{ bgcolor: "background.surface" }}
+              variant="soft"
+              color="neutral"
             />
           ) : null
         }
@@ -48,6 +60,7 @@ export default function Filter({ id, Icon, label, getOptions, tooltip }) {
         disabled={isPending}
         filterSelectedOptions
         autoComplete
+        disableListWrap
         onChange={(_e, value) => setFilters({ ...filters, [id]: value })}
       />
     </Tooltip>
