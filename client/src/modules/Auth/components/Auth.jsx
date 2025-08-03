@@ -237,7 +237,7 @@ export default function Auth() {
               message="1 special"
             />
             <InputValidMessage
-              isValid={password.length > 8}
+              isValid={password.length > 7}
               message="8 characters"
             />
           </Box>
