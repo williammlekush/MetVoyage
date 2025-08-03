@@ -1,32 +1,22 @@
 import { useState, useCallback } from "react";
-import { Autocomplete, Box, Dropdown, IconButton, ListItemDecorator, Menu, MenuButton, MenuItem, Modal, Snackbar, Typography } from "@mui/joy";
+import { Dropdown, IconButton, ListItemDecorator, Menu, MenuButton, MenuItem, Snackbar } from "@mui/joy";
 import { Add, Favorite, MoreVert } from "@mui/icons-material";
 import axios from "axios";
 import { getItineraries } from "../api";
-import { formatDate } from "../../Shared/utils/stringHelpers";
+import ItineraryModal from "./ItineraryModal";
 
 function OverviewAction({ art, user, setApiError}) {
 
     // #region state
     const isFavoriteDisabled = user.fav === art.id;
-    const newItinerary = { id: -1, date: "", can_add: 1 };
-    const [itineraryLookups, setItineraryLookups] = useState([newItinerary]);
+
+    const [itineraryLookups, setItineraryLookups] = useState([]);
+
     const [message, setMessage] = useState("");
+
     const [modalOpen, setModalOpen] = useState(false);
     const handleOpenModal = () => setModalOpen(true);
     const handleCloseModal = () => setModalOpen(false);
-
-    const style = {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 400,
-        variant: "solid",
-        backgroundColor: 'background.body',
-        border: '2px solid #000',
-        p: 4,
-    };
     // #endregion
 
     // #region api calls
@@ -89,30 +79,12 @@ function OverviewAction({ art, user, setApiError}) {
                     </MenuItem>
                 </Menu>
             </Dropdown>
-            <Modal
-                open={modalOpen}
-                onClose={handleCloseModal}
-                sx={{...style}}
-            >
-                <Box>
-                    <Typography level="h3">
-                        Select an itinerary to add the {art.title} to.
-                    </Typography>
-                    <Autocomplete
-                        options={itineraryLookups}
-                        getOptionDisabled={(option) => option.can_add === 0}
-                        getOptionLabel={(option) => (
-                            "Trip on " +
-                            formatDate(option.date) +
-                            (option.can_add === 0
-                                ? " (Already added)"
-                                : "")
-                        )}
-                        selectOnFocus
-                        clearOnBlur
-                    />
-                </Box>
-            </Modal>
+            <ItineraryModal
+                art={art}
+                itineraryLookups={itineraryLookups}
+                modalOpen={modalOpen}
+                handleCloseModal={handleCloseModal}
+            />
             <Snackbar
                 open={!!message}
                 onClose={() => setMessage(null)}
