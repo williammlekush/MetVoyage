@@ -43,4 +43,16 @@ ROUTER.post("/favorite", (_request, response) => {
   });
 });
 
+ROUTER.post("/addToItinerary", (_request, response) => {
+  runStoredProcedure({
+    procedure: "addObjectToItinerary",
+    parameters: [
+      _request.body.userId,
+      _request.body.objectId,
+      _request.body.itineraryId,
+    ],
+    resultCallback: (result) => response.status(200).json(result),
+  });
+});
+
 export default ROUTER;
