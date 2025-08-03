@@ -47,7 +47,6 @@ ROUTER.post("/addToItinerary", (_request, response) => {
   runStoredProcedure({
     procedure: "addObjectToItinerary",
     parameters: [
-      _request.body.userId,
       _request.body.objectId,
       _request.body.itineraryId,
     ],

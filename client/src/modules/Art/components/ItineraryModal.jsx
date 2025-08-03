@@ -3,12 +3,61 @@ import { Modal, Box, Typography, Autocomplete, IconButton, Button } from '@mui/j
 import { Close } from '@mui/icons-material';
 import { createFilterOptions } from '@mui/joy/Autocomplete';
 import { formatDate, isFutureDateString, isValidDate } from '../../Shared/utils/stringHelpers';
+import { createItinerary } from '../../Itinerary/api';
+import { addToItinerary } from '../api';
 
-function ItineraryModal({ art, itineraryLookups, modalOpen, handleCloseModal}) {
+function ItineraryModal({ art, user, itineraryLookups, modalOpen, handleCloseModal, setApiError, setMessage}) {
 
     // #region state
         const filter = createFilterOptions();
         const [value, setValue] = useState();
+    // #endregion
+
+    // #region handlers
+    const handleResetModal = () => {
+        setValue(null);
+        handleCloseModal();
+    };
+
+    const handleAddToItinerary = () => {
+        if (value) {
+            // Handle adding to itinerary
+            if (value.id === 0) {
+                // Create new itinerary for the selected date
+                createItinerary(user.id, value.date)
+                    .then(response => {
+                        if (response.status === 200) {
+                            const newItinerary = response.data[0][0];
+                            // Add art to the new itinerary
+                            addToItinerary(art.id, newItinerary.id)
+                                .then(response => {
+                                    if (response.status === 200) {
+                                        setMessage("Art added to new itinerary successfully.");
+                                    } else {
+                                        setApiError("Failed to add art to new itinerary.");
+                                    }
+                                })
+                                .catch(error => setApiError(error));
+                        } else {
+                            setApiError("Failed to create itinerary.");
+                        }
+                    })
+                    .catch(error => setApiError(error));
+            } else {
+                // Add to existing itinerary
+                addToItinerary(art.id, value.id)
+                    .then(response => {
+                        if (response.status === 200) {
+                            setMessage("Art added to itinerary successfully.");
+                        } else {
+                            setApiError("Failed to add art to itinerary.");
+                        }
+                    })
+                    .catch(error => setApiError(error));
+            }
+            handleResetModal();
+        }
+    };
     // #endregion
 
     return (
@@ -77,16 +126,12 @@ function ItineraryModal({ art, itineraryLookups, modalOpen, handleCloseModal}) {
                         clearOnBlur
                     />
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 2 }}>
-                        <Button variant="soft" color="neutral" onClick={handleCloseModal}>
+                        <Button variant="soft" color="neutral" onClick={handleResetModal}>
                             Cancel
                         </Button>
                         <Button
                             variant="solid"
-                            onClick={() => {
-                                if (value) {
-                                    // Handle adding to itinerary
-                                }
-                            }}
+                            onClick={handleAddToItinerary}
                             disabled={!value || value.id === -1}
                         >
                             {value && value.id === 0 ? "Add to New Itinerary" : "Add to Itinerary"}

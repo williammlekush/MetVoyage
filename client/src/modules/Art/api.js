@@ -10,3 +10,6 @@ export const getArtAggregateData = (id) =>
 
 export const getItineraries = (userId, objectId) =>
   axios.get(`/api/object/read/itineraries`, { params: { userId, objectId } });
+
+export const addToItinerary = (objectId, itineraryId) =>
+  axios.post(`/api/object/addToItinerary`, { objectId, itineraryId });

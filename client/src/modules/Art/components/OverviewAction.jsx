@@ -81,9 +81,12 @@ function OverviewAction({ art, user, setApiError}) {
             </Dropdown>
             <ItineraryModal
                 art={art}
+                user={user}
                 itineraryLookups={itineraryLookups}
                 modalOpen={modalOpen}
                 handleCloseModal={handleCloseModal}
+                setApiError={setApiError}
+                setMessage={setMessage}
             />
             <Snackbar
                 open={!!message}
