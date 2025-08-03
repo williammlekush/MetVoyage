@@ -3,8 +3,8 @@ import axios from "axios";
 export const getUserExistsByUsername = (username) =>
   axios.get(`/api/user/existsByUsername`, { params: { userName: username } });
 
-export const getUserExistsByUsernamePassword = (username, password) =>
-  axios.get("/api/user/existsByUsernamePassword", {
+export const getUserByUsernamePassword = (username, password) =>
+  axios.get("/api/user/readIdByUsernamePassword", {
     params: { userName: username, passWord: password },
   });
 

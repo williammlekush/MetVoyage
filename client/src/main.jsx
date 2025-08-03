@@ -1,7 +1,10 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import Router from "./Router.jsx";
-import { Box, CssBaseline, CssVarsProvider, Sheet } from "@mui/joy";
+import { CssBaseline, CssVarsProvider, Sheet } from "@mui/joy";
+import UserProvider from "./modules/Shared/components/UserProvider.jsx";
+import { Feedback } from "@mui/icons-material";
+import FeedbackProvider from "./modules/Shared/components/FeedbackProvider.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -19,7 +22,11 @@ createRoot(document.getElementById("root")).render(
           height: "100dvh",
         }}
       >
-        <Router />
+        <UserProvider>
+          <FeedbackProvider>
+            <Router />
+          </FeedbackProvider>
+        </UserProvider>
       </Sheet>
     </CssVarsProvider>
   </StrictMode>
