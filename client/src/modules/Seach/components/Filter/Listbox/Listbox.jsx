@@ -30,7 +30,7 @@ export const Listbox = forwardRef(function ListBox(props, ref) {
         <FixedSizeList
           itemData={itemData}
           height={itemSize * 8}
-          width="160px"
+          width="100%"
           outerElementType={OuterElementType}
           innerElementType="ul"
           itemSize={itemSize}

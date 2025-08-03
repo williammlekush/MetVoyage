@@ -1,5 +1,7 @@
 import express from "express";
 import { runStoredProcedure } from "../query.js";
+import { cacheGuard, setCache } from "../cache.js";
+import { pendingGuard } from "../pending.js";
 
 const ROUTER = express.Router();
 
@@ -52,149 +54,113 @@ ROUTER.post("/addToItinerary", (_request, response) => {
 });
 
 //#region read distinct col
-ROUTER.get("/read/distinctNames", (_request, response) =>
-  runStoredProcedure({
+
+const cacheableDistinctEndpoints = [
+  {
+    path: "/read/distinctNames",
+    key: "objectNames",
     procedure: "loadObjectNames",
-    parameters: [],
-    resultCallback: (result) => {
-      const data = result[0];
-      if (data?.length > 0) response.status(200).json(data);
-      else response.status(404).json("No names found.");
-    },
-  })
-);
-
-ROUTER.get("/read/distinctTitles", (_request, response) =>
-  runStoredProcedure({
+    notFound: "No names found.",
+  },
+  {
+    path: "/read/distinctTitles",
+    key: "objectTitles",
     procedure: "loadObjectTitles",
-    parameters: [],
-    resultCallback: (result) => {
-      const data = result[0];
-      if (data?.length > 0) response.status(200).json(data);
-      else response.status(404).json("No titles found.");
-    },
-  })
-);
-
-ROUTER.get("/read/distinctMedia", (_request, response) =>
-  runStoredProcedure({
+    notFound: "No titles found.",
+  },
+  {
+    path: "/read/distinctMedia",
+    key: "objectMedia",
     procedure: "loadObjectMedia",
-    parameters: [],
-    resultCallback: (result) => {
-      const data = result[0];
-      if (data?.length > 0) response.status(200).json(data);
-      else response.status(404).json("No media found.");
-    },
-  })
-);
-
-ROUTER.get("/read/distinctClassifications", (_request, response) =>
-  runStoredProcedure({
+    notFound: "No media found.",
+  },
+  {
+    path: "/read/distinctClassifications",
+    key: "objectClassifications",
     procedure: "loadObjectClassifications",
-    parameters: [],
-    resultCallback: (result) => {
-      const data = result[0];
-      if (data?.length > 0) response.status(200).json(data);
-      else response.status(404).json("No classifications found.");
-    },
-  })
-);
-
-ROUTER.get("/read/distinctDepartments", (_request, response) =>
-  runStoredProcedure({
+    notFound: "No classifications found.",
+  },
+  {
+    path: "/read/distinctDepartments",
+    key: "objectDepartments",
     procedure: "loadObjectDepartments",
-    parameters: [],
-    resultCallback: (result) => {
-      const data = result[0];
-      if (data?.length > 0) response.status(200).json(data);
-      else response.status(404).json("No departments found.");
-    },
-  })
-);
-
-ROUTER.get("/read/distinctCities", (_request, response) =>
-  runStoredProcedure({
+    notFound: "No departments found.",
+  },
+  {
+    path: "/read/distinctCities",
+    key: "objectCities",
     procedure: "loadObjectCities",
-    parameters: [],
-    resultCallback: (result) => {
-      const data = result[0];
-      if (data?.length > 0) response.status(200).json(data);
-      else response.status(404).json("No cities found.");
-    },
-  })
-);
-
-ROUTER.get("/read/distinctCountries", (_request, response) =>
-  runStoredProcedure({
+    notFound: "No cities found.",
+  },
+  {
+    path: "/read/distinctCountries",
+    key: "objectCountries",
     procedure: "loadObjectCountries",
-    parameters: [],
-    resultCallback: (result) => {
-      const data = result[0];
-      if (data?.length > 0) response.status(200).json(data);
-      else response.status(404).json("No countries found.");
-    },
-  })
-);
-
-ROUTER.get("/read/distinctRegions", (_request, response) =>
-  runStoredProcedure({
+    notFound: "No countries found.",
+  },
+  {
+    path: "/read/distinctRegions",
+    key: "objectRegions",
     procedure: "loadObjectRegions",
-    parameters: [],
-    resultCallback: (result) => {
-      const data = result[0];
-      if (data?.length > 0) response.status(200).json(data);
-      else response.status(404).json("No regions found.");
-    },
-  })
-);
-
-ROUTER.get("/read/distinctCultures", (_request, response) =>
-  runStoredProcedure({
+    notFound: "No regions found.",
+  },
+  {
+    path: "/read/distinctCultures",
+    key: "objectCultures",
     procedure: "loadObjectCultures",
-    parameters: [],
-    resultCallback: (result) => {
-      const data = result[0];
-      if (data?.length > 0) response.status(200).json(data);
-      else response.status(404).json("No cultures found.");
-    },
-  })
-);
-
-ROUTER.get("/read/distinctPeriods", (_request, response) =>
-  runStoredProcedure({
+    notFound: "No cultures found.",
+  },
+  {
+    path: "/read/distinctPeriods",
+    key: "objectPeriods",
     procedure: "loadObjectPeriods",
-    parameters: [],
-    resultCallback: (result) => {
-      const data = result[0];
-      if (data?.length > 0) response.status(200).json(data);
-      else response.status(404).json("No periods found.");
-    },
-  })
-);
-
-ROUTER.get("/read/distinctDynasties", (_request, response) =>
-  runStoredProcedure({
+    notFound: "No periods found.",
+  },
+  {
+    path: "/read/distinctDynasties",
+    key: "objectDynasties",
     procedure: "loadObjectDynasties",
-    parameters: [],
-    resultCallback: (result) => {
-      const data = result[0];
-      if (data?.length > 0) response.status(200).json(data);
-      else response.status(404).json("No dynasties found.");
-    },
-  })
-);
-
-ROUTER.get("/read/distinctReigns", (_request, response) =>
-  runStoredProcedure({
+    notFound: "No dynasties found.",
+  },
+  {
+    path: "/read/distinctReigns",
+    key: "objectReigns",
     procedure: "loadObjectReigns",
-    parameters: [],
-    resultCallback: (result) => {
-      const data = result[0];
-      if (data?.length > 0) response.status(200).json(data);
-      else response.status(404).json("No reigns found.");
-    },
-  })
-);
+    notFound: "No reigns found.",
+  },
+];
+
+cacheableDistinctEndpoints.forEach(({ path, key, procedure, notFound }) => {
+  ROUTER.get(path, (_request, response) => {
+    pendingGuard(
+      key,
+      () =>
+        new Promise((resolve, reject) => {
+          const cachedData = cacheGuard(key, () =>
+            runStoredProcedure({
+              procedure,
+              parameters: [],
+              resultCallback: (result) => {
+                const data = result[0];
+                if (data?.length > 0) {
+                  setCache(key, data);
+                  response.status(200).json(data);
+                  resolve();
+                } else {
+                  response.status(404).json(notFound);
+                  resolve();
+                }
+              },
+            })
+          );
+          if (cachedData?.length > 0) {
+            response.status(200).json(cachedData);
+          }
+          resolve();
+        })
+    );
+  });
+});
 //#endregion
 
 export default ROUTER;
