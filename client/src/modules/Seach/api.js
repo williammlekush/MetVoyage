@@ -1,5 +1,7 @@
 import axios from "axios";
 
-//#region filter options
-export const getNameOptions = () => axios.get("/api/object/readDistinctNames");
-//#endregion
+export const getObjectOptions = (columnPlural) =>
+  axios.get(`/api/object/readDistinct${columnPlural}`);
+
+export const getArtistOptions = () =>
+  axios.get("/api/artist/readDistinctNames");

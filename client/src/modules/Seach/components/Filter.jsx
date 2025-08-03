@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { usePending } from "../../Shared/hooks/usePending";
 import { useFilters } from "../hooks/useFilters";
-import { Autocomplete, Tooltip } from "@mui/joy";
+import { Autocomplete, CircularProgress, Tooltip } from "@mui/joy";
 
 export default function Filter({ id, Icon, label, getOptions, tooltip }) {
   const [options, setOptions] = useState([]);
@@ -30,12 +30,11 @@ export default function Filter({ id, Icon, label, getOptions, tooltip }) {
         mutliple
         id={id}
         placeholder={label}
-        noOptionsText={getFailed ? "Options could not be loaded" : "No options"}
+        noOptionsText={getFailed ? "Failed to load options" : "No options"}
         options={options}
         limitTags={3}
-        variant="soft"
         size="sm"
-        sx={{ maxWidth: "240px" }}
+        sx={{ maxWidth: "160px", fontSize: "xs" }}
         startDecorator={Icon}
         endDecorator={
           isPending ? (
