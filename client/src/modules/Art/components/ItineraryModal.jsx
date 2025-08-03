@@ -68,7 +68,7 @@ function ItineraryModal({ art, user, itineraryLookups, modalOpen, handleCloseMod
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
                 width: 400,
-                height: 150,
+                height: 300,
                 backgroundColor: 'background.paper',
                 border: '2px solid #000',
                 p: 4,}}
