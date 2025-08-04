@@ -9,10 +9,8 @@ function Art({ userId }) {
   const id = params.get("id");
   // #endregion
 
-  return (
-    <CssVarsProvider sx={{ margin: 6, maxWidth: "100vw", p: 2 }}>
-        <ArtCard id={id} user={{ id: userId, fav: 33 }} />
-    </CssVarsProvider>
+  return (  
+    <ArtCard id={id} user={{ id: userId, fav: 33 }} />
   );
 }
 
