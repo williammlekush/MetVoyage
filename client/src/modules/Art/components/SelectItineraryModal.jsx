@@ -5,8 +5,9 @@ import { createFilterOptions } from '@mui/joy/Autocomplete';
 import { formatDate, isFutureDateString, isValidDate } from '../../Shared/utils/stringHelpers';
 import { createItinerary } from '../../Itinerary/api';
 import { addToItinerary } from '../api';
+import { useFeedback } from '../../Shared/hooks/useFeedback';
 
-function SelectItineraryModal({ art, user, itineraryLookups, modalOpen, handleCloseModal, setApiError, setMessage}) {
+function SelectItineraryModal({ art, user, itineraryLookups, modalOpen, handleCloseModal}) {
 
     // #region state
         const filter = createFilterOptions();
@@ -14,6 +15,8 @@ function SelectItineraryModal({ art, user, itineraryLookups, modalOpen, handleCl
     // #endregion
 
     // #region handlers
+    const { setErrorMessage, setSuccessMessage } = useFeedback();
+
     const handleResetModal = () => {
         setValue(null);
         handleCloseModal();
@@ -32,28 +35,28 @@ function SelectItineraryModal({ art, user, itineraryLookups, modalOpen, handleCl
                             addToItinerary(art.id, newItinerary.id)
                                 .then(response => {
                                     if (response.status === 200) {
-                                        setMessage("Art added to new itinerary successfully.");
+                                        setSuccessMessage("Art added to new itinerary successfully.");
                                     } else {
-                                        setApiError("Failed to add art to new itinerary.");
+                                        setErrorMessage("Failed to add art to new itinerary.");
                                     }
                                 })
-                                .catch(error => setApiError(error));
+                                .catch(error => setErrorMessage(error));
                         } else {
-                            setApiError("Failed to create itinerary.");
+                            setErrorMessage("Failed to create itinerary.");
                         }
                     })
-                    .catch(error => setApiError(error));
+                    .catch(error => setErrorMessage(error));
             } else {
                 // Add to existing itinerary
                 addToItinerary(art.id, value.id)
                     .then(response => {
                         if (response.status === 200) {
-                            setMessage("Art added to itinerary successfully.");
+                            setSuccessMessage("Art added to itinerary successfully.");
                         } else {
-                            setApiError("Failed to add art to itinerary.");
+                            setErrorMessage("Failed to add art to itinerary.");
                         }
                     })
-                    .catch(error => setApiError(error));
+                    .catch(error => setErrorMessage(error));
             }
             handleResetModal();
         }

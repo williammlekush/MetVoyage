@@ -4,8 +4,9 @@ import { Add, Favorite, MoreVert } from "@mui/icons-material";
 import axios from "axios";
 import { getItineraries } from "../api";
 import SelectItineraryModal from "./SelectItineraryModal";
+import { useFeedback } from "../../Shared/hooks/useFeedback";
 
-function ArtCardActionMenu({ art, user, setApiError}) {
+function ArtCardActionMenu({ art, user}) {
 
     // #region state
     const isFavoriteDisabled = user.fav === art.id;
@@ -20,18 +21,20 @@ function ArtCardActionMenu({ art, user, setApiError}) {
     // #endregion
 
     // #region api calls
+    const { setErrorMessage, setSuccessMessage } = useFeedback();
+
     const favoriteArt = useCallback(async () => {
         await axios
             .post("/api/object/favorite", { id: user.id, objectId: art.id })
             .then((response) => {
             if (response.status === 200 && response.data[0][0].affected_rows > 0) {
-                setMessage("Art favorited successfully.");
+                setSuccessMessage("Art favorited successfully.");
             } else {
-                setApiError("Art not favorited :-(");
+                setErrorMessage("Art not favorited :-(");
             }
             })
-            .catch((error) => setApiError(error));
-    }, [art.id, setApiError, user.id]);
+            .catch((error) => setErrorMessage(error));
+    }, [art.id, setErrorMessage, setSuccessMessage, user.id]);
     // #endregion
 
     const handleAddToItinerary = useCallback(async () => {
@@ -42,8 +45,8 @@ function ArtCardActionMenu({ art, user, setApiError}) {
                     setItineraryLookups(response.data[0]);
                 }
             })
-            .catch((error) => setApiError(error));
-    }, [art.id, setApiError, user.id]);
+            .catch((error) => setErrorMessage(error));
+    }, [art.id, setErrorMessage, user.id]);
 
     return (
         <>
@@ -85,7 +88,6 @@ function ArtCardActionMenu({ art, user, setApiError}) {
                 itineraryLookups={itineraryLookups}
                 modalOpen={modalOpen}
                 handleCloseModal={handleCloseModal}
-                setApiError={setApiError}
                 setMessage={setMessage}
             />
             <Snackbar

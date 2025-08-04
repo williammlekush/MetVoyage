@@ -6,6 +6,8 @@ import ArtCardOverflow from "./ArtCardOverflow";
 import ArtDetails from "./ArtDetails";
 import ArtCardActionMenu from "./ArtCardActionMenu";
 import { getArt, getArtAggregateData, getArtist } from "../api";
+import { usePending } from "../../Shared/hooks/usePending";
+import { useFeedback } from "../../Shared/hooks/useFeedback";
 
 function ArtCard({ id, user }) {
 
@@ -14,47 +16,55 @@ function ArtCard({ id, user }) {
     const [artist, setArtist] = useState({});
 
     const [expanded, setExpanded] = useState(false);
-
-    const [apiError, setApiError] = useState();
-
-    const [isArtLoading, setIsArtLoading] = useState(true);
     // #endregion
 
     // #region API calls
+    const { call, isPending } = usePending();
+
+    // Track loading state separately to link API calls
+    const { setErrorMessage } = useFeedback();
+
     const loadArt = useCallback(async (id) => {
         try {
-            const artResponse = await getArt(id);
-            if (artResponse.status === 200) {
-                const artData = artResponse.data[0][0];
+            await call(() => getArt(id))
+                .then(async (artResponse) => {
+                    const artData = artResponse.data[0][0];
 
-                const artAggregateResponse = await getArtAggregateData(id);
-                if (artAggregateResponse.status === 200) {
-                    artData.favoriteCount = artAggregateResponse.data[0][0].favorite_count;
-                    artData.itineraryCount = artAggregateResponse.data[0][0].itinerary_count;
-                }
+                    await call(() => getArtAggregateData(id))
+                        .then((artAggregateResponse) => {
+                            if (artAggregateResponse.status === 200) {
+                                artData.favoriteCount = artAggregateResponse.data[0][0].favorite_count;
+                                artData.itineraryCount = artAggregateResponse.data[0][0].itinerary_count;
+                            }
+                        })
+                        .catch((error) => {
+                            setErrorMessage(error);
+                        });
 
-                setArt(artData);
-                setIsArtLoading(false);
+                    setArt(artData);
 
-                // Use artData directly here
-                if (artData) {
-                    const artistResponse = await getArtist(id);
-                    if (artistResponse.status === 200) {
-                        const artistData = artistResponse.data[0][0];
-                        setArtist(artistData);
-                    } else {
-                        setApiError("No artist found :-(");
+                    // Use artData directly here
+                    if (artData) {
+                        await call(() => getArtist(id))
+                            .then((artistResponse) => {
+                                if (artistResponse.status === 200) {
+                                    setArtist(artistResponse.data[0][0]);
+                                } else {
+                                    setErrorMessage("No artist found :-(");
+                                }
+                            })
+                            .catch((error) => {
+                                setErrorMessage(error);
+                            });
                     }
-                }
-            } else {
-                setApiError(`Art ID ${id} not found :-(`);
-                setIsArtLoading(false);
-            }
+                })
+                .catch(() => {
+                    setErrorMessage(`Art ID ${id} not found :-(`);
+                });
         } catch (error) {
-            setApiError(error);
-            setIsArtLoading(false);
+            setErrorMessage(error);
         }
-    }, []);
+    }, [call, setErrorMessage]);
     // #endregion
 
     // #region useEffects
@@ -62,9 +72,10 @@ function ArtCard({ id, user }) {
     if (id > 0 && !isNaN(id)) {
         loadArt(id);
     } else {
-        setApiError("Invalid ID provided.");
+        setErrorMessage("Invalid ID provided.");
     }
-    }, [id, loadArt]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     // #endregion
 
     return (
@@ -82,9 +93,9 @@ function ArtCard({ id, user }) {
                         <CardOverflow>
                             <ArtCardOverflow
                                 art={art}
-                                isArtLoading={isArtLoading}
+                                isArtLoading={art.id ? isPending : true}
                                 ButtonComponent={() => (
-                                    <ArtCardActionMenu art={art} user={user} setApiError={setApiError} />
+                                    <ArtCardActionMenu art={art} user={user} />
                                 )}
                             />
                             <ArtCardBasicInfo
@@ -109,15 +120,6 @@ function ArtCard({ id, user }) {
                     setExpanded={setExpanded}
                 />
             </Card>
-            <Snackbar
-                open={!!apiError}
-                onClose={() => setApiError(null)}
-                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-                color="danger"
-                variant="soft"
-            >
-                {apiError}
-            </Snackbar>
         </>
     );
 }
