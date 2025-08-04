@@ -4,3 +4,12 @@ export const getArt = (id) => axios.get(`/api/object/read`, { params: { id } });
 
 export const getArtist = (objectId) =>
   axios.get(`/api/object/read/artist`, { params: { objectId } });
+
+export const getArtAggregateData = (id) =>
+  axios.get(`/api/object/read/aggregateData`, { params: { id } });
+
+export const getItineraries = (userId, objectId) =>
+  axios.get(`/api/object/read/itineraries`, { params: { userId, objectId } });
+
+export const addToItinerary = (objectId, itineraryId) =>
+  axios.post(`/api/object/addToItinerary`, { objectId, itineraryId });
