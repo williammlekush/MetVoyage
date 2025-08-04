@@ -3,9 +3,9 @@ import { Dropdown, IconButton, ListItemDecorator, Menu, MenuButton, MenuItem, Sn
 import { Add, Favorite, MoreVert } from "@mui/icons-material";
 import axios from "axios";
 import { getItineraries } from "../api";
-import ItineraryModal from "./ItineraryModal";
+import SelectItineraryModal from "./SelectItineraryModal";
 
-function OverviewAction({ art, user, setApiError}) {
+function ArtCardActionMenu({ art, user, setApiError}) {
 
     // #region state
     const isFavoriteDisabled = user.fav === art.id;
@@ -79,7 +79,7 @@ function OverviewAction({ art, user, setApiError}) {
                     </MenuItem>
                 </Menu>
             </Dropdown>
-            <ItineraryModal
+            <SelectItineraryModal
                 art={art}
                 user={user}
                 itineraryLookups={itineraryLookups}
@@ -101,4 +101,4 @@ function OverviewAction({ art, user, setApiError}) {
     );
 }
 
-export default OverviewAction;
+export default ArtCardActionMenu;

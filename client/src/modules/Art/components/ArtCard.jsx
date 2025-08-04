@@ -4,7 +4,7 @@ import ArtCardBasicInfo from "./ArtCardBasicInfo";
 import ArtCardFooter from "./ArtCardFooter";
 import ArtCardOverflow from "./ArtCardOverflow";
 import ArtDetails from "./ArtDetails";
-import OverviewAction from "./OverviewAction";
+import ArtCardActionMenu from "./ArtCardActionMenu";
 import { getArt, getArtAggregateData, getArtist } from "../api";
 
 function ArtCard({ id, user }) {
@@ -84,7 +84,7 @@ function ArtCard({ id, user }) {
                                 art={art}
                                 isArtLoading={isArtLoading}
                                 ButtonComponent={() => (
-                                    <OverviewAction art={art} user={user} setApiError={setApiError} />
+                                    <ArtCardActionMenu art={art} user={user} setApiError={setApiError} />
                                 )}
                             />
                             <ArtCardBasicInfo

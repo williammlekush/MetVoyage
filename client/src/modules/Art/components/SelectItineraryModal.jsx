@@ -6,7 +6,7 @@ import { formatDate, isFutureDateString, isValidDate } from '../../Shared/utils/
 import { createItinerary } from '../../Itinerary/api';
 import { addToItinerary } from '../api';
 
-function ItineraryModal({ art, user, itineraryLookups, modalOpen, handleCloseModal, setApiError, setMessage}) {
+function SelectItineraryModal({ art, user, itineraryLookups, modalOpen, handleCloseModal, setApiError, setMessage}) {
 
     // #region state
         const filter = createFilterOptions();
@@ -147,4 +147,4 @@ function ItineraryModal({ art, user, itineraryLookups, modalOpen, handleCloseMod
     )
 };
 
-export default ItineraryModal;
+export default SelectItineraryModal;
