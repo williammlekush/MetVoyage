@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { Box, Card, CardContent, CardOverflow, Divider, Snackbar } from "@mui/joy";
+import { Box, Card, CardContent, CardOverflow, Divider } from "@mui/joy";
 import ArtCardBasicInfo from "./ArtCardBasicInfo";
 import ArtCardFooter from "./ArtCardFooter";
 import ArtCardOverflow from "./ArtCardOverflow";

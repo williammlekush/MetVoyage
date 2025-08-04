@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { Dropdown, IconButton, ListItemDecorator, Menu, MenuButton, MenuItem, Snackbar } from "@mui/joy";
+import { Dropdown, IconButton, ListItemDecorator, Menu, MenuButton, MenuItem } from "@mui/joy";
 import { Add, Favorite, MoreVert } from "@mui/icons-material";
 import axios from "axios";
 import { getItineraries } from "../api";
@@ -12,8 +12,6 @@ function ArtCardActionMenu({ art, user}) {
     const isFavoriteDisabled = user.fav === art.id;
 
     const [itineraryLookups, setItineraryLookups] = useState([]);
-
-    const [message, setMessage] = useState("");
 
     const [modalOpen, setModalOpen] = useState(false);
     const handleOpenModal = () => setModalOpen(true);
@@ -88,17 +86,7 @@ function ArtCardActionMenu({ art, user}) {
                 itineraryLookups={itineraryLookups}
                 modalOpen={modalOpen}
                 handleCloseModal={handleCloseModal}
-                setMessage={setMessage}
             />
-            <Snackbar
-                open={!!message}
-                onClose={() => setMessage(null)}
-                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-                color="success"
-                variant="soft"
-            >
-                {message}
-            </Snackbar>
         </>
     );
 }
