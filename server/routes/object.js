@@ -54,7 +54,6 @@ ROUTER.post("/addToItinerary", (_request, response) => {
 });
 
 //#region read distinct col
-
 const cacheableDistinctEndpoints = [
   {
     path: "/read/distinctNames",
@@ -135,7 +134,7 @@ cacheableDistinctEndpoints.forEach(({ path, key, procedure, notFound }) => {
     pendingGuard(
       key,
       () =>
-        new Promise((resolve, reject) => {
+        new Promise((resolve, _reject) => {
           const cachedData = cacheGuard(key, () =>
             runStoredProcedure({
               procedure,
@@ -162,5 +161,59 @@ cacheableDistinctEndpoints.forEach(({ path, key, procedure, notFound }) => {
   });
 });
 //#endregion
+
+const getFilterObjectsParam = (filterKey, query) => query[filterKey] || -2;
+
+ROUTER.get("/read/filteredObjects", (request, response) => {
+  const artist = getFilterObjectsParam("artist", request.query);
+  const title = getFilterObjectsParam("title", request.query);
+  const medium = getFilterObjectsParam("medium", request.query);
+  const name = getFilterObjectsParam("name", request.query);
+  const classification = getFilterObjectsParam("classification", request.query);
+  const department = getFilterObjectsParam("department", request.query);
+  const period = getFilterObjectsParam("period", request.query);
+  const dynasty = getFilterObjectsParam("dynasty", request.query);
+  const reign = getFilterObjectsParam("reign", request.query);
+  const city = getFilterObjectsParam("city", request.query);
+  const country = getFilterObjectsParam("country", request.query);
+  const region = getFilterObjectsParam("region", request.query);
+  const culture = getFilterObjectsParam("culture", request.query);
+
+  pendingGuard(
+    "searchObjects",
+    () =>
+      new Promise((resolve, _reject) => {
+        runStoredProcedure({
+          procedure: "searchObjects",
+          parameters: [
+            title,
+            artist,
+            medium,
+            name,
+            classification,
+            department,
+            period,
+            dynasty,
+            reign,
+            city,
+            country,
+            region,
+            culture,
+          ],
+          resultCallback: (result) => {
+            const data = result[0];
+            if (data) {
+              response.status(200).json(data);
+              resolve();
+            } else {
+              response.status(404).json("Search returned no data.");
+              resolve();
+            }
+          },
+        });
+        resolve();
+      })
+  );
+});
 
 export default ROUTER;

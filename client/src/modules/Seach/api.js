@@ -5,3 +5,6 @@ export const getObjectOptions = (columnPlural) =>
 
 export const getArtistOptions = () =>
   axios.get("/api/artist/read/distinctNames");
+
+export const searchObjects = (filters) =>
+  axios.get("/api/object/read/filteredObjects", { params: filters });

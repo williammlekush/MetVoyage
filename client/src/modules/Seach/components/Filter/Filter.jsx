@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { usePending } from "../../../Shared/hooks/usePending";
-import { useFilters } from "../../hooks/useFilters";
 import { Autocomplete, CircularProgress, Tooltip } from "@mui/joy";
 import { Listbox } from "./Listbox/Listbox";
+import { useSearch } from "../../hooks/useSearch";
 
 export default function Filter({
   id,
@@ -15,7 +15,7 @@ export default function Filter({
   const [options, setOptions] = useState([]);
   const [getFailed, setGetFailed] = useState(false);
 
-  const { filters, setFilters } = useFilters();
+  const { setFiltersAndSearch } = useSearch();
 
   const { call, isPending } = usePending();
 
@@ -35,7 +35,6 @@ export default function Filter({
   return (
     <Tooltip title={tooltip} placement="top-start">
       <Autocomplete
-        multiple
         id={id}
         placeholder={label}
         noOptionsText={getFailed ? "Failed to load options" : "No options"}
@@ -61,7 +60,7 @@ export default function Filter({
         filterSelectedOptions
         autoComplete
         disableListWrap
-        onChange={(_e, value) => setFilters({ ...filters, [id]: value })}
+        onChange={(_e, value) => setFiltersAndSearch({ [id]: value })}
       />
     </Tooltip>
   );

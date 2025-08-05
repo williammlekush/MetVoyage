@@ -1,5 +1,12 @@
-import FiltersProvider from "./FiltersProvider";
+import Filters from "./Filters";
+import List from "./List";
+import SearchProvider from "./SearchProvider";
 
 export default function Search() {
-  return <FiltersProvider>{/* list of resulst goes here*/}</FiltersProvider>;
+  return (
+    <SearchProvider>
+      <Filters />
+      <List />
+    </SearchProvider>
+  );
 }

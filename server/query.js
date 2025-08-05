@@ -62,12 +62,15 @@ export const runStoredProcedure = ({
   procedure,
   parameters,
   resultCallback,
+  paramsAreValues = true,
 }) => {
   const sql = `CALL ${procedure}(${parameters
     .map((parameter) => {
-      const type = typeof parameter;
-      if (type === "string") return `'${parameter}'`;
-      if (type === "boolean") return parameter ? 1 : 0;
+      if (paramsAreValues) {
+        const type = typeof parameter;
+        if (type === "string") return `'${parameter}'`;
+        if (type === "boolean") return parameter ? 1 : 0;
+      }
       return parameter;
     })
     .join(", ")});`;

@@ -1,6 +1,13 @@
-import { useMemo, useState } from "react";
-import { FiltersContext } from "../hooks/useFilters";
-import Filter from "./Filter/Filter";
+import { useMemo } from "react";
+import { getArtistOptions, getObjectOptions } from "../api";
+import {
+  Accordion,
+  accordionClasses,
+  AccordionDetails,
+  AccordionGroup,
+  AccordionSummary,
+  Stack,
+} from "@mui/joy";
 import {
   Castle,
   Category,
@@ -16,20 +23,9 @@ import {
   Title,
   TypeSpecimen,
 } from "@mui/icons-material";
-import { getArtistOptions, getObjectOptions } from "../api";
-import {
-  Accordion,
-  accordionClasses,
-  AccordionDetails,
-  AccordionGroup,
-  AccordionSummary,
-  Stack,
-  Typography,
-} from "@mui/joy";
+import Filter from "./Filter/Filter";
 
-export default function FiltersProvider({ children }) {
-  const [filters, setFilters] = useState();
-
+export default function Filters() {
   const iconProps = useMemo(() => ({ fontSize: "xs" }), []);
 
   const objectFilters = useMemo(
@@ -174,46 +170,42 @@ export default function FiltersProvider({ children }) {
   );
 
   return (
-    <FiltersContext.Provider value={{ filters, setFilters }}>
-      <AccordionGroup
-        size="sm"
-        sx={() => ({
-          paddingX: "0.5rem",
-          [`& .${accordionClasses.root}`]: {
-            marginTop: "0.25rem",
-            fontSize: "xs",
+    <AccordionGroup
+      size="sm"
+      sx={() => ({
+        paddingX: "0.5rem",
+        [`& .${accordionClasses.root}`]: {
+          marginTop: "0.25rem",
+          fontSize: "xs",
+          transition: "0.2s ease",
+          '& button:not([aria-expanded="true"])': {
             transition: "0.2s ease",
-            '& button:not([aria-expanded="true"])': {
-              transition: "0.2s ease",
-            },
-            "& button:hover": {
-              background: "transparent",
-            },
           },
-          [`& .${accordionClasses.root}.${accordionClasses.expanded}`]: {
-            bgcolor: "background.level1",
-            borderRadius: "md",
-            borderColor: "background.level2",
+          "& button:hover": {
+            background: "transparent",
           },
-        })}
-      >
-        {[objectFilters, museumFilters, timeFilters, placeFilters].map(
-          ({ title, filters }, index) => (
-            <Accordion defaultExpanded={index === 0}>
-              <AccordionSummary>{title}</AccordionSummary>
-              <AccordionDetails>
-                <Stack direction="row" spacing={2} useFlexGap flexWrap="wrap">
-                  {filters.map((filter) => (
-                    <Filter {...filter} />
-                  ))}
-                </Stack>
-              </AccordionDetails>
-            </Accordion>
-          )
-        )}
-      </AccordionGroup>
-
-      {children}
-    </FiltersContext.Provider>
+        },
+        [`& .${accordionClasses.root}.${accordionClasses.expanded}`]: {
+          bgcolor: "background.level1",
+          borderRadius: "md",
+          borderColor: "background.level2",
+        },
+      })}
+    >
+      {[objectFilters, museumFilters, timeFilters, placeFilters].map(
+        ({ title, filters }, index) => (
+          <Accordion defaultExpanded={index === 0}>
+            <AccordionSummary>{title}</AccordionSummary>
+            <AccordionDetails>
+              <Stack direction="row" spacing={2} useFlexGap flexWrap="wrap">
+                {filters.map((filter) => (
+                  <Filter {...filter} />
+                ))}
+              </Stack>
+            </AccordionDetails>
+          </Accordion>
+        )
+      )}
+    </AccordionGroup>
   );
 }
