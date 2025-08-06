@@ -32,7 +32,7 @@ export default function ArtCard({ art, artist, isPending }) {
           </Box>
           {expanded && (
             <Box sx={{ pl: 2, flex: 1 }}>
-              <Divider orientation="vertical" flexItem />
+              <Divider orientation="vertical" flexitem />
               <CardContent>
                 <ArtDetails art={art} artist={artist} />
               </CardContent>
