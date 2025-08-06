@@ -3,8 +3,9 @@ import { Add, Delete, Share } from "@mui/icons-material";
 import { useCallback, useEffect, useState } from "react";
 import { usePending } from "../../Shared/hooks/usePending";
 import { useFeedback } from "../../Shared/hooks/useFeedback";
+import ShareModal from "./ShareModal";
 import UnShareModal from "./UnShareModal";
-import { getUsersForItinerary, unShareItinerary } from "../api";
+import { getUsersForItinerary, shareItinerary, unShareItinerary } from "../api";
 
 function ShareItinerary({itinerary}) {
 
@@ -36,7 +37,7 @@ function ShareItinerary({itinerary}) {
 
     const handleUnShareSuccess = useCallback(() => {
         setSuccessMessage(`Unshared itinerary with ${unShareUser.userName}`);
-        setUsers({...users, unShareUser});
+        setUserOptions({...users, unShareUser}); //Add the deleted user back to available options
         setUnShareUser(undefined);
     }, [unShareUser, users, setSuccessMessage]);
 
@@ -44,6 +45,18 @@ function ShareItinerary({itinerary}) {
         await call(() => unShareItinerary(itinerary.id, user.userId))
             .then(() => handleUnShareSuccess())
             .catch(error => setErrorMessage("Failed to unshare itinerary: " + error.message));
+    };
+
+    const handleShareSuccess = useCallback((user) => {
+        setSuccessMessage(`Shared itinerary with ${user.userName}`);
+        setUserOptions(users.filter((u) => u.userId !== user.userId)); // Remove the shared user from options
+        setUsers([...users, user]); // Add the new user to the list of shared users
+    }, [users, setSuccessMessage]);
+
+    const share = async (user) => {
+        await call(() => shareItinerary(itinerary.id, user.userId))
+            .then(() => handleShareSuccess(user))
+            .catch(error => setErrorMessage("Failed to share itinerary: " + error.message));
     };
     // #endregion
 
@@ -96,6 +109,12 @@ function ShareItinerary({itinerary}) {
                 onClose={() => handleUnShareModalClose()}
                 onUnShare={unShare}
                 user={unShareUser}
+            />
+            <ShareModal
+                isOpen={isShareModalOpen}
+                onClose={() => setIsShareModalOpen(false)}
+                onShare={share}
+                userOptions={userOptions}
             />
         </>
     );
