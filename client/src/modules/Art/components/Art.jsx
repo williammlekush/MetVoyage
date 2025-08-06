@@ -5,7 +5,7 @@ import { getArt, getArtAggregateData, getArtist } from "../api";
 import { usePending } from "../../Shared/hooks/usePending";
 import { useFeedback } from "../../Shared/hooks/useFeedback";
 
-export default function Art({ userId }) {
+export default function Art() {
   // #region navigation/location
   const location = useLocation();
   const params = new URLSearchParams(location.search);
@@ -83,12 +83,5 @@ export default function Art({ userId }) {
   }, []);
   // #endregion
 
-  return (
-    <ArtCard
-      user={{ id: userId, fav: 33 }}
-      art={art}
-      artist={artist}
-      isPending={isPending}
-    />
-  );
+  return <ArtCard art={art} artist={artist} isPending={isPending} />;
 }

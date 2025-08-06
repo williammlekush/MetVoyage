@@ -6,7 +6,7 @@ import ArtCardOverflow from "./ArtCardOverflow";
 import ArtDetails from "./ArtDetails";
 import ArtCardActionMenu from "./ArtCardActionMenu";
 
-export default function ArtCard({ user, art, artist, isPending }) {
+export default function ArtCard({ art, artist, isPending }) {
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -25,9 +25,7 @@ export default function ArtCard({ user, art, artist, isPending }) {
               <ArtCardOverflow
                 art={art}
                 isArtLoading={art.id ? isPending : true}
-                ButtonComponent={() => (
-                  <ArtCardActionMenu art={art} user={user} />
-                )}
+                ButtonComponent={() => <ArtCardActionMenu art={art} />}
               />
               <ArtCardBasicInfo art={art} artist={artist} />
             </CardOverflow>
