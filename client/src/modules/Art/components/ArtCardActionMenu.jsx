@@ -63,12 +63,12 @@ function ArtCardActionMenu({ art }) {
             root: {
               variant: "solid",
               color: "neutral",
-              size: "md",
+              size: "sm",
               sx: {
                 position: "absolute",
                 zIndex: 10,
                 borderRadius: "50%",
-                right: "1rem",
+                right: "0.5rem",
                 bottom: 0,
                 transform: "translateY(50%)",
               },

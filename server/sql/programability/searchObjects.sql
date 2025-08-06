@@ -14,12 +14,35 @@ CREATE PROCEDURE searchObjects(
    IN culture VARCHAR(16383)
 )
 BEGIN
-   SELECT * 
+   SELECT objects.id
+      ,objects.title
+      ,objects.medium
+      ,objects.name
+      ,objects.classification
+      ,objects.department
+      ,objects.period
+      ,objects.dynasty
+      ,objects.reign
+      ,objects.city
+      ,objects.country
+      ,objects.region
+      ,objects.culture
+      ,created.artist_id
+      ,artists.id AS artist_id
+      ,artists.name AS artist_name
+      ,artists.nationality AS artist_nationality
+      ,artists.begin_date AS artist_begin_date
+      ,artists.end_date AS artist_end_date
+      ,created.artist_prefix
+      ,images.url 
+      ,images.public_caption
    FROM objects
    JOIN created 
       ON objects.id = created.object_id
    JOIN artists
       ON created.artist_id = artists.id
+   LEFT JOIN images
+      ON images.object_id = objects.id
    WHERE (artist = -2 
       OR artists.name = artist
    ) AND ( title = -2  
