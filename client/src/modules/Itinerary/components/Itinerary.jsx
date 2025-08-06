@@ -6,33 +6,33 @@ import { usePending } from "../../Shared/hooks/usePending";
 import { useUser } from "../../Shared/hooks/useUser";
 import { getItineraryById } from "../api";
 import { formatDate } from "../../Shared/utils/stringHelpers";
+import Header from "../../Header/components/Header";
 
 function Itinerary() {
     // #region navigation/location
     const location = useLocation();
     const params = new URLSearchParams(location.search);
     const id = params.get("id");
+    // #endregion
+
+    // #region state
     const { user } = useUser();
 
     const [itinerary, setItinerary] = useState();
+    const isEditEnabled = itinerary?.owner_id === user.id;
 
     const { call, isPending } = usePending();
     const { setErrorMessage, setSuccessMessage } = useFeedback();
+
+    const AlertText = "Itinerary not found: either the record does not exist, or you do not have permission to view the itinerary."
     // #endregion
 
     // #region API calls
-    const onSuccess = useCallback((data) => {
-        if (data)
-            setItinerary(data);
-        else
-            setErrorMessage("No itinerary found.");
-    }, [setItinerary, setErrorMessage]);
-
     const loadItinerary = useCallback(async (id) => {
         await call(() => getItineraryById(id, user.id))
-            .then((response) => onSuccess(response.data[0][0]))
+            .then((response) => setItinerary(response.data[0][0]))
             .catch((error) => setErrorMessage("Failed to load itinerary: " + error.message));
-    }, [call, onSuccess, setErrorMessage, user.id]);
+    }, [call, setErrorMessage, user.id]);
 
     // #endregion
 
@@ -49,12 +49,13 @@ function Itinerary() {
 
     return (
         <>
+            <Header />
             {itinerary ? (
                 <Typography level="h1" sx={{ textAlign: 'center', mt: 4 }}>
-                    {formatDate(itinerary.date)}
+                    {isEditEnabled ? "Edit: " : ""} {formatDate(itinerary.date)}
                 </Typography>
             ) : (
-                <Alert color="danger">Itinerary not found: either the record does not exist, or you do not have permission to view the itinerary.</Alert>
+                <Alert color="danger">{AlertText}</Alert>
             )}
         </>
     );
