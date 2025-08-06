@@ -11,6 +11,22 @@ ROUTER.post("/create", (request, response) => {
   });
 });
 
+ROUTER.post("/share", (request, response) => {
+  runStoredProcedure({
+    procedure: "shareItinerary",
+    parameters: [request.body.itineraryId, request.body.userId],
+    resultCallback: (result) => response.status(200).json(result),
+  });
+});
+
+ROUTER.post("/unshare", (request, response) => {
+  runStoredProcedure({
+    procedure: "unShareItinerary",
+    parameters: [request.body.itineraryId, request.body.userId],
+    resultCallback: (result) => response.status(200).json(result),
+  });
+});
+
 ROUTER.get("/read/forUser", (request, response) => {
   runStoredProcedure({
     procedure: "getItinerariesForUser",

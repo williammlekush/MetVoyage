@@ -15,3 +15,6 @@ export const getObjectsForItinerary = (itineraryId) =>
 
 export const getUsersForItinerary = (itineraryId) =>
   axios.get(`/api/itinerary/read/users`, { params: { itineraryId } });
+
+export const unShareItinerary = (itineraryId, userId) =>
+  axios.post(`/api/itinerary/unshare`, { itineraryId, userId });
