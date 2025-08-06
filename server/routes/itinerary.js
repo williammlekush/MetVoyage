@@ -11,4 +11,12 @@ ROUTER.post("/create", (request, response) => {
   });
 });
 
+ROUTER.get("/read/forUser", (request, response) => {
+  runStoredProcedure({
+    procedure: "getItinerariesForUser",
+    parameters: [request.query.userId],
+    resultCallback: (result) => response.status(200).json(result),
+  });
+});
+
 export default ROUTER;

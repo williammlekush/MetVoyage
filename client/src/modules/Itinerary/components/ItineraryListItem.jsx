@@ -1,6 +1,7 @@
 import { Button } from "@mui/joy";
 import { Edit, Visibility } from "@mui/icons-material";
 import { useState } from "react";
+import { formatDate } from "../../Shared/utils/stringHelpers";
 
 function ItineraryListItem({ itinerary }) {
     const [hovered, setHovered] = useState(false);
@@ -22,7 +23,7 @@ function ItineraryListItem({ itinerary }) {
         borderRadius: "xl",
       }}
     >
-      {itinerary.date}
+      {formatDate(itinerary.date)}
     </Button>
   );
 }
