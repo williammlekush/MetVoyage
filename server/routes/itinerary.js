@@ -27,4 +27,12 @@ ROUTER.get("/read", (request, response) => {
   });
 });
 
+ROUTER.get("/read/objects", (request, response) => {
+  runStoredProcedure({
+    procedure: "getObjectsForItinerary",
+    parameters: [request.query.itineraryId],
+    resultCallback: (result) => response.status(200).json(result),
+  });
+});
+
 export default ROUTER;

@@ -44,7 +44,7 @@ function ItineraryList() {
         <Card
             variant="soft"
             color="neutral"
-
+            sx={{ mt: 2 }}
         >
             <CardOverflow sx={{ p: 0 }}>
                 <Button
@@ -68,13 +68,13 @@ function ItineraryList() {
                         {expanded && (
                             <>
                                 {upcomingTrips.slice(1).map((itinerary) => (
-                                    <ItineraryListItem key={itinerary.date} itinerary={itinerary} />
+                                    <ItineraryListItem key={itinerary.id} itinerary={itinerary} />
                                 ))}
                                 {pastTrips.length > 0 && (
                                     <>
                                         <Divider sx={{ my: 2 }} > Past Trips </Divider>
                                         {pastTrips.map((itinerary) => (
-                                            <ItineraryListItem key={itinerary.date} itinerary={itinerary} />
+                                            <ItineraryListItem key={itinerary.id} itinerary={itinerary} />
                                         ))}
                                     </>
                                 )}

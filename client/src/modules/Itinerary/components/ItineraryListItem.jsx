@@ -1,11 +1,14 @@
-import { Button } from "@mui/joy";
+import { Button, CardContent, Tooltip } from "@mui/joy";
 import { Edit, Visibility } from "@mui/icons-material";
+import { useUser } from "../../Shared/hooks/useUser";
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { formatDate } from "../../Shared/utils/stringHelpers";
 
 function ItineraryListItem({ itinerary }) {
     const [hovered, setHovered] = useState(false);
+
+    const { user } = useUser();
 
     const navigate = useNavigate();
 
@@ -14,24 +17,30 @@ function ItineraryListItem({ itinerary }) {
     }, [navigate]);
 
     function getIcon() {
-        return itinerary.isOwner && !itinerary.isPast ? <Edit fontSize="md" /> : <Visibility fontSize="md" />;
+        return itinerary.owner_id === user.id && !itinerary.isPast
+          ? <Edit fontSize="md" />
+          : <Visibility fontSize="md" />;
     }
 
   return (
-    <Button
-      variant="plain"
-      color="soft"
-      startDecorator={hovered ? getIcon() : null}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      onClick={() => handleNavigate(itinerary.id)}
-      size="sm"
-      sx={{
-        borderRadius: "xl",
-      }}
-    >
-      {formatDate(itinerary.date)}
-    </Button>
+    <CardContent sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Tooltip title={itinerary.owner_id === user.id ? "Edit Itinerary" : "View Itinerary"} placement="right">
+        <Button
+          variant="plain"
+          color="soft"
+          startDecorator={hovered ? getIcon() : null}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          onClick={() => handleNavigate(itinerary.id)}
+          size="sm"
+          sx={{
+            borderRadius: "xl",
+          }}
+        >
+          {formatDate(itinerary.date)}
+        </Button>
+      </Tooltip>
+    </CardContent>
   );
 }
 
