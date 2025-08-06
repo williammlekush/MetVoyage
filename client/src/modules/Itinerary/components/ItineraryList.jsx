@@ -18,7 +18,7 @@ function ItineraryList() {
     const isEmpty = itineraries.length === 0;
     const pastTrips = itineraries.filter(itinerary => itinerary.isPast);
     const upcomingTrips = itineraries.filter(itinerary => !itinerary.isPast);
-
+    
     const onSuccess = useCallback((data) => {
         setItineraries(data);
     }, [setItineraries]);
