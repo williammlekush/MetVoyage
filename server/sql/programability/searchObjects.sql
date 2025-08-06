@@ -25,7 +25,7 @@ BEGIN
    ) AND ( title = -2  
       OR objects.title = title
    ) AND ( medium = -2 
-      OR medium = medium
+      OR objects.medium = medium
    ) AND ( name = -2 
       OR objects.name = name
    ) AND ( classification = -2 

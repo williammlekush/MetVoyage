@@ -195,7 +195,7 @@ export default function Filters() {
       {[objectFilters, museumFilters, timeFilters, placeFilters].map(
         ({ title, filters }, index) => (
           <Accordion defaultExpanded={index === 0}>
-            <AccordionSummary>{title}</AccordionSummary>
+            <AccordionSummary key={title}>{title}</AccordionSummary>
             <AccordionDetails>
               <Stack direction="row" spacing={2} useFlexGap flexWrap="wrap">
                 {filters.map((filter) => (

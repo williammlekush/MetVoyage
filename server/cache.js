@@ -1,5 +1,5 @@
 const cache = {};
-const CACHE_TTL = 60 * 10000;
+const CACHE_TTL = 60 * 60000; // 1 hr
 
 const getCache = (key) => {
   const entry = cache[key];
