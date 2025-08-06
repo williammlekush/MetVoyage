@@ -1,4 +1,4 @@
-import { Alert, Typography } from "@mui/joy";
+import { Alert, CircularProgress, Typography } from "@mui/joy";
 import { useEffect, useCallback, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useFeedback } from "../../Shared/hooks/useFeedback";
@@ -63,18 +63,22 @@ function Itinerary() {
     return (
         <>
             <Header />
-            {itinerary ? (
-                <>
-                    <Typography level="h1" sx={{ textAlign: 'center', mt: 4 }}>
-                        {isEditEnabled ? "Edit: " : ""} {formatDate(itinerary.date)}
-                    </Typography>
-                    {objects.length > 0 && objects.map((object) => (
-                        <Typography key={object.id}>{JSON.stringify(object)}</Typography>
-                    ))}
-                </>
-            ) : (
-                <Alert color="danger">{AlertText}</Alert>
-            )}
+            { isPending ? <CircularProgress size="lg" variant="plain" /> :
+            <>
+                {itinerary ? (
+                    <>
+                        <Typography level="h1" sx={{ textAlign: 'center', mt: 4 }}>
+                            {isEditEnabled ? "Edit: " : ""} {formatDate(itinerary.date)}
+                        </Typography>
+                        {objects.length > 0 && objects.map((object) => (
+                            <Typography key={object.id}>{JSON.stringify(object)}</Typography>
+                        ))}
+                    </>
+                ) : (
+                    <Alert color="danger">{AlertText}</Alert>
+                )}
+            </>
+            }
         </>
     );
 }
