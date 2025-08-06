@@ -7,6 +7,7 @@ import { useUser } from "../../Shared/hooks/useUser";
 import { getItineraryById, getObjectsForItinerary } from "../api";
 import { formatDate } from "../../Shared/utils/stringHelpers";
 import Header from "../../Header/components/Header";
+import ShareItinerary from "./ShareItinerary";
 
 function Itinerary() {
     // #region navigation/location
@@ -70,6 +71,7 @@ function Itinerary() {
                         <Typography level="h1" sx={{ textAlign: 'center', mt: 4 }}>
                             {isEditEnabled ? "Edit: " : ""} {formatDate(itinerary.date)}
                         </Typography>
+                        {isEditEnabled && <ShareItinerary itinerary={itinerary} />}
                         {objects.length > 0 && objects.map((object) => (
                             <Typography key={object.id}>{JSON.stringify(object)}</Typography>
                         ))}

@@ -12,3 +12,6 @@ export const getItineraryById = (id, userId) =>
 
 export const getObjectsForItinerary = (itineraryId) =>
   axios.get(`/api/itinerary/read/objects`, { params: { itineraryId } });
+
+export const getUsersForItinerary = (itineraryId) =>
+  axios.get(`/api/itinerary/read/users`, { params: { itineraryId } });
