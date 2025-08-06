@@ -19,4 +19,12 @@ ROUTER.get("/read/forUser", (request, response) => {
   });
 });
 
+ROUTER.get("/read", (request, response) => {
+  runStoredProcedure({
+    procedure: "getItineraryById",
+    parameters: [request.query.id, request.query.userId],
+    resultCallback: (result) => response.status(200).json(result),
+  });
+});
+
 export default ROUTER;

@@ -6,3 +6,6 @@ export const createItinerary = (userId, date) =>
 
 export const getItinerariesForUser = (userId) =>
   axios.get(`/api/itinerary/read/forUser`, { params: { userId } });
+
+export const getItineraryById = (id, userId) =>
+  axios.get(`/api/itinerary/read`, { params: { id, userId } });
