@@ -7,7 +7,7 @@ import { useUser } from "../../Shared/hooks/useUser";
 import { getItineraryById, getObjectsForItinerary } from "../api";
 import { formatDate } from "../../Shared/utils/stringHelpers";
 import Header from "../../Header/components/Header";
-import ShareItinerary from "./ShareItinerary";
+import ShareMenu from "./ShareMenu";
 
 function Itinerary() {
     // #region navigation/location
@@ -24,7 +24,7 @@ function Itinerary() {
     const isEditEnabled = itinerary?.owner_id === user.id;
 
     const { call, isPending } = usePending();
-    const { setErrorMessage, setSuccessMessage } = useFeedback();
+    const { setErrorMessage } = useFeedback();
 
     const AlertText = "Itinerary not found: either the record does not exist, or you do not have permission to view the itinerary."
     // #endregion
@@ -71,7 +71,7 @@ function Itinerary() {
                         <Typography level="h1" sx={{ textAlign: 'center', mt: 4 }}>
                             {isEditEnabled ? "Edit: " : ""} {formatDate(itinerary.date)}
                         </Typography>
-                        {isEditEnabled && <ShareItinerary itinerary={itinerary} />}
+                        {isEditEnabled && <ShareMenu itinerary={itinerary} />}
                         {objects.length > 0 && objects.map((object) => (
                             <Typography key={object.id}>{JSON.stringify(object)}</Typography>
                         ))}

@@ -7,7 +7,7 @@ import ShareModal from "./ShareModal";
 import UnShareModal from "./UnShareModal";
 import { getUsersForItinerary, shareItinerary, unShareItinerary } from "../api";
 
-function ShareItinerary({itinerary}) {
+function ShareMenu({itinerary}) {
 
     const { call, isPending } = usePending();
     const { setErrorMessage, setSuccessMessage } = useFeedback();
@@ -119,4 +119,4 @@ function ShareItinerary({itinerary}) {
         </>
     );
 }
-export default ShareItinerary;
+export default ShareMenu;
