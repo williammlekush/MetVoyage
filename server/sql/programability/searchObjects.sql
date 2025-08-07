@@ -11,7 +11,9 @@ CREATE PROCEDURE searchObjects(
    IN city VARCHAR(16383),
    IN country VARCHAR(16383),
    IN region VARCHAR(16383),
-   IN culture VARCHAR(16383)
+   IN culture VARCHAR(16383),
+   IN limit_offset INT,
+   IN limit_count INT
 )
 BEGIN
    SELECT objects.id
@@ -70,5 +72,5 @@ BEGIN
    ) AND ( culture = -2 
       OR objects.culture = culture
    ) ORDER BY images.url DESC
-   LIMIT 20;
+   LIMIT limit_offset, limit_count;
 END;

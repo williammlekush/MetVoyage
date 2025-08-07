@@ -1,6 +1,6 @@
 import express from "express";
 import { runStoredProcedure } from "../query.js";
-import { cacheGuard, setCache } from "../cache.js";
+import { cacheGuard, getCache, setCache } from "../cache.js";
 import { pendingGuard } from "../pending.js";
 
 const ROUTER = express.Router();
@@ -179,6 +179,22 @@ ROUTER.get("/read/filteredObjects", (request, response) => {
   const region = getFilterObjectsParam("region", request.query);
   const culture = getFilterObjectsParam("culture", request.query);
 
+  const defaultLimitOffset = 0;
+  const defaultLimitCount = 21;
+
+  const resetCache = request.query.resetCache === "true";
+
+  const limitOffsetCacheKey = "limitOffset";
+
+  setCache(
+    limitOffsetCacheKey,
+    resetCache
+      ? defaultLimitOffset
+      : defaultLimitCount + getCache(limitOffsetCacheKey)
+  );
+
+  const searchCacheKey = "search";
+
   pendingGuard(
     "searchObjects",
     () =>
@@ -199,6 +215,8 @@ ROUTER.get("/read/filteredObjects", (request, response) => {
             country,
             region,
             culture,
+            getCache(limitOffsetCacheKey),
+            defaultLimitCount,
           ],
           resultCallback: (result) => {
             const data = result[0];
@@ -216,6 +234,15 @@ ROUTER.get("/read/filteredObjects", (request, response) => {
                       ) || {}),
                     }));
                   }
+
+                  if (!resetCache) {
+                    const cachedSearchData = getCache(searchCacheKey);
+                    if (cachedSearchData) {
+                      responseData = [...cachedSearchData, ...responseData];
+                    }
+                  }
+
+                  setCache(searchCacheKey, responseData);
                   response.status(200).json(responseData);
                   resolve();
                 },

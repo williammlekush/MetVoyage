@@ -1,7 +1,7 @@
 const cache = {};
 const CACHE_TTL = 60 * 60000; // 1 hr
 
-const getCache = (key) => {
+export const getCache = (key) => {
   const entry = cache[key];
   if (!entry) return null;
   if (Date.now() - entry.timestamp > CACHE_TTL) {
