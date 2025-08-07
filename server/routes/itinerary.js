@@ -59,12 +59,4 @@ ROUTER.get("/read/users", (request, response) => {
   });
 });
 
-ROUTER.get("/read/userOptions", (request, response) => {
-  runStoredProcedure({
-    procedure: "loadUserOptions",
-    parameters: [],
-    resultCallback: (result) => response.status(200).json(result),
-  });
-});
-
 export default ROUTER;
