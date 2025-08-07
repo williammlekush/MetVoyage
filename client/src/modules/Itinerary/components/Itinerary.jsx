@@ -40,6 +40,7 @@ function Itinerary() {
         setItinerary(data);
         if (data) {
             loadObjects(data.id);
+
         }
     }, [loadObjects]);
 

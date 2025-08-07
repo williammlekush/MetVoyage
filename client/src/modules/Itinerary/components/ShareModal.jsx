@@ -26,7 +26,6 @@ function ShareModal({ isOpen, onClose, onShare, userOptions }) {
                             onChange={(event, newValue) => {
                                 setUser(newValue);
                             }}
-                            renderInput={(params) => <TextField {...params} label="User" />}
                         />
                         <Button variant="solid" color="primary" onClick={handleShare}>
                             Share

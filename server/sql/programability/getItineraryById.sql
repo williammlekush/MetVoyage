@@ -3,7 +3,7 @@ BEGIN
     SELECT Itineraries.id,
         Itineraries.date,
         Itineraries.owner_id,
-        COALESCE(Users.display_name, Users.user_name) AS ownerName,
+        COALESCE(NULLIF(Users.display_name, ''), Users.user_name) AS ownerName,
         CASE WHEN Itineraries.date < CURDATE() THEN 1
             ELSE 0
         END AS isPast

@@ -5,14 +5,20 @@ import { usePending } from "../../Shared/hooks/usePending";
 import { useFeedback } from "../../Shared/hooks/useFeedback";
 import ShareModal from "./ShareModal";
 import UnShareModal from "./UnShareModal";
-import { getUsersForItinerary, shareItinerary, unShareItinerary } from "../api";
+import { getUsersForItinerary, getUserOptions, shareItinerary, unShareItinerary } from "../api";
+import { useUser } from "../../Shared/hooks/useUser";
 
 function ShareMenu({itinerary}) {
 
     const { call, isPending } = usePending();
     const { setErrorMessage, setSuccessMessage } = useFeedback();
+
+    const { user } = useUser();
     const [users, setUsers] = useState([]);
     const [userOptions, setUserOptions] = useState([]);
+    const filteredUserOptions = Array.isArray(userOptions)
+        ? userOptions.filter((option) => !users.some((user) => user.userId === option.userId) && option.userId !== user.id)
+        : [];
 
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const [isUnShareModalOpen, setIsUnShareModalOpen] = useState(false);
@@ -29,10 +35,17 @@ function ShareMenu({itinerary}) {
     }, []);
 
     // #region API calls
-    const loadUsers = async () => {
+
+    const loadCurrentUsers = async () => {
         await call(() => getUsersForItinerary(itinerary.id))
             .then((response) => setUsers(response.data[0]))
             .catch((error) => setErrorMessage("Failed to load users: " + error.message));
+    };
+
+    const loadUserOptions = async () => {
+        await call(() => getUserOptions())
+            .then((response) => setUserOptions(response.data[0]))
+            .catch((error) => setErrorMessage("Failed to load user options: " + error.message));
     };
 
     const handleUnShareSuccess = useCallback(() => {
@@ -60,12 +73,15 @@ function ShareMenu({itinerary}) {
     };
     // #endregion
 
+    // #region useEffects
     useEffect(() => {
         if (itinerary && itinerary.id) {
-            loadUsers();
+            loadCurrentUsers();
+            loadUserOptions();
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+    // #endregion
 
     return (
         <>
@@ -114,7 +130,7 @@ function ShareMenu({itinerary}) {
                 isOpen={isShareModalOpen}
                 onClose={() => setIsShareModalOpen(false)}
                 onShare={share}
-                userOptions={userOptions}
+                userOptions={filteredUserOptions}
             />
         </>
     );
