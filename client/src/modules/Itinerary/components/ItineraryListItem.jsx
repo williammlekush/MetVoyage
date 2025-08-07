@@ -16,17 +16,21 @@ function ItineraryListItem({ itinerary }) {
         navigate(`/itinerary?id=${itineraryId}`);
     }, [navigate]);
 
+    const editable = itinerary.owner_id === user.id && !itinerary.isPast;
+
     function getIcon() {
-        return itinerary.owner_id === user.id && !itinerary.isPast
+        return editable
           ? <Edit fontSize="md" />
           : <Visibility fontSize="md" />;
     }
 
   return (
     <CardContent sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      <Tooltip title={itinerary.owner_id === user.id
+      <Tooltip title={editable
           ? "Edit Your Itinerary"
-          : "View " + itinerary.ownerName + "'s Itinerary"} placement="right">
+          : "View " +
+            (itinerary.owner_id === user.id ? "Your" : itinerary.ownerName + "'s") +
+            " Itinerary"} placement="right">
         <Button
           variant="plain"
           color="soft"
