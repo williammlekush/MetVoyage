@@ -1,5 +1,7 @@
 import express from "express";
 import { runStoredProcedure } from "../query.js";
+import { cacheGuard, setCache } from "../cache.js";
+import { pendingGuard } from "../pending.js";
 
 const ROUTER = express.Router();
 
@@ -46,12 +48,172 @@ ROUTER.post("/favorite", (_request, response) => {
 ROUTER.post("/addToItinerary", (_request, response) => {
   runStoredProcedure({
     procedure: "addObjectToItinerary",
-    parameters: [
-      _request.body.objectId,
-      _request.body.itineraryId,
-    ],
+    parameters: [_request.body.objectId, _request.body.itineraryId],
     resultCallback: (result) => response.status(200).json(result),
   });
+});
+
+//#region read distinct col
+const cacheableDistinctEndpoints = [
+  {
+    path: "/read/distinctNames",
+    key: "objectNames",
+    procedure: "loadObjectNames",
+    notFound: "No names found.",
+  },
+  {
+    path: "/read/distinctTitles",
+    key: "objectTitles",
+    procedure: "loadObjectTitles",
+    notFound: "No titles found.",
+  },
+  {
+    path: "/read/distinctMedia",
+    key: "objectMedia",
+    procedure: "loadObjectMedia",
+    notFound: "No media found.",
+  },
+  {
+    path: "/read/distinctClassifications",
+    key: "objectClassifications",
+    procedure: "loadObjectClassifications",
+    notFound: "No classifications found.",
+  },
+  {
+    path: "/read/distinctDepartments",
+    key: "objectDepartments",
+    procedure: "loadObjectDepartments",
+    notFound: "No departments found.",
+  },
+  {
+    path: "/read/distinctCities",
+    key: "objectCities",
+    procedure: "loadObjectCities",
+    notFound: "No cities found.",
+  },
+  {
+    path: "/read/distinctCountries",
+    key: "objectCountries",
+    procedure: "loadObjectCountries",
+    notFound: "No countries found.",
+  },
+  {
+    path: "/read/distinctRegions",
+    key: "objectRegions",
+    procedure: "loadObjectRegions",
+    notFound: "No regions found.",
+  },
+  {
+    path: "/read/distinctCultures",
+    key: "objectCultures",
+    procedure: "loadObjectCultures",
+    notFound: "No cultures found.",
+  },
+  {
+    path: "/read/distinctPeriods",
+    key: "objectPeriods",
+    procedure: "loadObjectPeriods",
+    notFound: "No periods found.",
+  },
+  {
+    path: "/read/distinctDynasties",
+    key: "objectDynasties",
+    procedure: "loadObjectDynasties",
+    notFound: "No dynasties found.",
+  },
+  {
+    path: "/read/distinctReigns",
+    key: "objectReigns",
+    procedure: "loadObjectReigns",
+    notFound: "No reigns found.",
+  },
+];
+
+cacheableDistinctEndpoints.forEach(({ path, key, procedure, notFound }) => {
+  ROUTER.get(path, (_request, response) => {
+    pendingGuard(
+      key,
+      () =>
+        new Promise((resolve, _reject) => {
+          const cachedData = cacheGuard(key, () =>
+            runStoredProcedure({
+              procedure,
+              parameters: [],
+              resultCallback: (result) => {
+                const data = result[0];
+                if (data?.length > 0) {
+                  setCache(key, data);
+                  response.status(200).json(data);
+                  resolve();
+                } else {
+                  response.status(404).json(notFound);
+                  resolve();
+                }
+              },
+            })
+          );
+          if (cachedData?.length > 0) {
+            response.status(200).json(cachedData);
+          }
+          resolve();
+        })
+    );
+  });
+});
+//#endregion
+
+const getFilterObjectsParam = (filterKey, query) => query[filterKey] || -2;
+
+ROUTER.get("/read/filteredObjects", (request, response) => {
+  const artist = getFilterObjectsParam("artist", request.query);
+  const title = getFilterObjectsParam("title", request.query);
+  const medium = getFilterObjectsParam("medium", request.query);
+  const name = getFilterObjectsParam("name", request.query);
+  const classification = getFilterObjectsParam("classification", request.query);
+  const department = getFilterObjectsParam("department", request.query);
+  const period = getFilterObjectsParam("period", request.query);
+  const dynasty = getFilterObjectsParam("dynasty", request.query);
+  const reign = getFilterObjectsParam("reign", request.query);
+  const city = getFilterObjectsParam("city", request.query);
+  const country = getFilterObjectsParam("country", request.query);
+  const region = getFilterObjectsParam("region", request.query);
+  const culture = getFilterObjectsParam("culture", request.query);
+
+  pendingGuard(
+    "searchObjects",
+    () =>
+      new Promise((resolve, _reject) => {
+        runStoredProcedure({
+          procedure: "searchObjects",
+          parameters: [
+            title,
+            artist,
+            medium,
+            name,
+            classification,
+            department,
+            period,
+            dynasty,
+            reign,
+            city,
+            country,
+            region,
+            culture,
+          ],
+          resultCallback: (result) => {
+            const data = result[0];
+            if (data) {
+              response.status(200).json(data);
+              resolve();
+            } else {
+              response.status(404).json("Search returned no data.");
+              resolve();
+            }
+          },
+        });
+        resolve();
+      })
+  );
 });
 
 export default ROUTER;

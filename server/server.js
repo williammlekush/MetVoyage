@@ -5,6 +5,7 @@ import HELLO from "./routes/hello.js";
 import OBJECT from "./routes/object.js";
 import USER from "./routes/user.js";
 import ITINERARY from "./routes/itinerary.js";
+import ARTIST from "./routes/artist.js";
 import { buildDb, buildStoredProcedures, connect } from "./query.js";
 
 dotenv.config();
@@ -24,10 +25,11 @@ const APP = express();
 APP.use(cors());
 APP.use(express.json());
 
+APP.use("/api/artist", ARTIST);
 APP.use("/api/hello", HELLO);
 APP.use("/api/object", OBJECT);
 APP.use("/api/user", USER);
-APP.use("/api/itinerary", ITINERARY );
+APP.use("/api/itinerary", ITINERARY);
 
 const PORT = process.env.PORT || 5000;
 APP.listen(PORT, () =>
