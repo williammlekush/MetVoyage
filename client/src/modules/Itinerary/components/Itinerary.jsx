@@ -54,12 +54,13 @@ function Itinerary() {
 
     // #region useEffects
     useEffect(() => {
-    if (id > 0 && !isNaN(id)) {
-        loadItinerary(id);
-    } else {
-        setErrorMessage("Invalid ID provided.");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        const numericId = parseInt(id, 10);
+        if (numericId > 0 && !isNaN(numericId)) {
+            loadItinerary(numericId);
+        } else {
+            setErrorMessage("Invalid ID provided.");
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     // #endregion
 

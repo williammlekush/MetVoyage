@@ -51,7 +51,7 @@ function ShareMenu({itinerary}) {
     const handleUnShareSuccess = useCallback(() => {
         setSuccessMessage(`Unshared itinerary with ${unShareUser.userName}`);
         setUsers(prev => prev.filter(user => user.userId !== unShareUser.userId)); // Remove the unshared user
-        setUserOptions(prev => [...prev, unShareUser].sort()); //Add the deleted user back to available options
+        setUserOptions(prev => [...prev, unShareUser].sort((a, b) => a.userName.localeCompare(b.userName))); //Add the deleted user back to available options
     }, [setSuccessMessage, unShareUser]);
 
     const unShare = async (user) => {
@@ -63,7 +63,7 @@ function ShareMenu({itinerary}) {
     const handleShareSuccess = useCallback((user) => {
         setSuccessMessage(`Shared itinerary with ${user.userName}`);
         setUserOptions(prev => prev.filter((u) => u.userId !== user.userId)); // Remove the shared user from options
-        setUsers(prev => [...prev, user].sort()); // Add the new user to the list of shared users
+        setUsers(prev => [...prev, user].sort((a, b) => a.userName.localeCompare(b.userName))); // Add the new user to the list of shared users
     }, [setSuccessMessage]);
 
     const share = async (user) => {
