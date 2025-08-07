@@ -140,7 +140,9 @@ export const parseMetImages = () =>
     fs.createReadStream("../raw_data/met_images.csv")
       .pipe(csv())
       .on("data", (row) => {
-        images.push(mapRow(imagesMap, row));
+        if (row.is_oasc === true || row.is_oasc === "true") {
+          images.push(mapRow(imagesMap, row));
+        }
       })
       .on("end", () => resolve(images))
       .on("error", (err) => reject(err));
