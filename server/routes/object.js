@@ -16,7 +16,7 @@ ROUTER.get("/read", (_request, response) => {
 ROUTER.get("/read/aggregateData", (_request, response) => {
   runStoredProcedure({
     procedure: "getObjectAggregateData",
-    parameters: [_request.query.id],
+    parameters: [_request.query.id.toString()],
     resultCallback: (result) => response.status(200).json(result),
   });
 });
@@ -203,7 +203,23 @@ ROUTER.get("/read/filteredObjects", (request, response) => {
           resultCallback: (result) => {
             const data = result[0];
             if (data) {
-              response.status(200).json(data);
+              runStoredProcedure({
+                procedure: "getObjectAggregateData",
+                parameters: [data.map(({ id }) => id).join(",")],
+                resultCallback: (aggData) => {
+                  let responseData = data;
+                  if (aggData) {
+                    responseData = data.map((obj) => ({
+                      ...obj,
+                      ...(aggData.find(
+                        (aggregateData) => aggregateData.id === obj.id
+                      ) || {}),
+                    }));
+                  }
+                  response.status(200).json(responseData);
+                  resolve();
+                },
+              });
               resolve();
             } else {
               response.status(404).json("Search returned no data.");
