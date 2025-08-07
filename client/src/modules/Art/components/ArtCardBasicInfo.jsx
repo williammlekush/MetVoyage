@@ -39,8 +39,7 @@ function ArtCardBasicInfo({ art, artist }) {
           level="body-sm"
           color="neutral"
           sx={{
-            display: "flex",
-            alignItems: "center",
+            display: "-webkit-box",
             overflow: "hidden",
             textOverflow: "ellipsis",
             WebkitLineClamp: 1,

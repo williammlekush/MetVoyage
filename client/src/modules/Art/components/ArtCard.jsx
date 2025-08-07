@@ -21,7 +21,7 @@ export default function ArtCard({ art, artist, isPending }) {
       }}
     >
       <Box sx={{ display: "flex", flexDirection: "row", width: "100%" }}>
-        <Box sx={{ flex: 1 }}>
+        <Box sx={{ width: "100%", flex: 1 }}>
           <ArtCardOverflow
             art={art}
             isArtLoading={art.id ? isPending : true}
@@ -31,7 +31,7 @@ export default function ArtCard({ art, artist, isPending }) {
         </Box>
         {expanded && (
           <Box sx={{ pl: 2, flex: 1 }}>
-            <Divider orientation="vertical" flexitem />
+            <Divider orientation="vertical" />
             <ArtDetails art={art} artist={artist} />
           </Box>
         )}
