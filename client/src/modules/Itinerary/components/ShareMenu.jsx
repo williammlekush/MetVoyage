@@ -50,9 +50,9 @@ function ShareMenu({itinerary}) {
 
     const handleUnShareSuccess = useCallback(() => {
         setSuccessMessage(`Unshared itinerary with ${unShareUser.userName}`);
-        setUserOptions({...users, unShareUser}); //Add the deleted user back to available options
-        setUnShareUser(undefined);
-    }, [unShareUser, users, setSuccessMessage]);
+        setUsers(prev => prev.filter(user => user.userId !== unShareUser.userId)); // Remove the unshared user
+        setUserOptions(prev => [...prev, unShareUser].sort()); //Add the deleted user back to available options
+    }, [setSuccessMessage, unShareUser]);
 
     const unShare = async (user) => {
         await call(() => unShareItinerary(itinerary.id, user.userId))
@@ -62,9 +62,9 @@ function ShareMenu({itinerary}) {
 
     const handleShareSuccess = useCallback((user) => {
         setSuccessMessage(`Shared itinerary with ${user.userName}`);
-        setUserOptions(users.filter((u) => u.userId !== user.userId)); // Remove the shared user from options
-        setUsers([...users, user]); // Add the new user to the list of shared users
-    }, [users, setSuccessMessage]);
+        setUserOptions(prev => prev.filter((u) => u.userId !== user.userId)); // Remove the shared user from options
+        setUsers(prev => [...prev, user].sort()); // Add the new user to the list of shared users
+    }, [setSuccessMessage]);
 
     const share = async (user) => {
         await call(() => shareItinerary(itinerary.id, user.userId))
@@ -92,11 +92,10 @@ function ShareMenu({itinerary}) {
                         variant: 'solid',
                         color: 'neutral',
                         size: 'md' } }}
-                    placement="right-start"
                 >
                     <Share />
                 </MenuButton>
-                <Menu>
+                <Menu placement="right-start">
                     <Tooltip title={`Share with new user`} placement="right">
                         <MenuItem onClick={() => setIsShareModalOpen(true)}>
                             <ListItemDecorator>

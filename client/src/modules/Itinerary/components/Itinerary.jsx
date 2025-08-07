@@ -1,4 +1,5 @@
-import { Alert, CircularProgress, Typography } from "@mui/joy";
+import { Alert, Avatar, CircularProgress, Stack, Tooltip, Typography } from "@mui/joy";
+import { Person } from "@mui/icons-material";
 import { useEffect, useCallback, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useFeedback } from "../../Shared/hooks/useFeedback";
@@ -69,10 +70,16 @@ function Itinerary() {
             <>
                 {itinerary ? (
                     <>
-                        <Typography level="h1" sx={{ textAlign: 'center', mt: 4 }}>
-                            {isEditEnabled ? "Edit: " : ""} {formatDate(itinerary.date)}
-                        </Typography>
-                        {isEditEnabled && <ShareMenu itinerary={itinerary} />}
+                        <Stack direction="row" justifyContent="center" alignItems="center" spacing={2} sx={{ mt: 2 }}> 
+                            <Typography level="h2" color={isEditEnabled ? "primary" : "inherit"} sx={{ textAlign: 'center', mt: 4 }}>
+                                {formatDate(itinerary.date)}
+                            </Typography>
+                            {isEditEnabled
+                                ? <ShareMenu itinerary={itinerary} />
+                                : <Tooltip title={"Owner: " + itinerary.ownerName} placement="right">
+                                    <Avatar size="sm" />
+                                </Tooltip>}
+                        </Stack>
                         {objects.length > 0 && objects.map((object) => (
                             <Typography key={object.id}>{JSON.stringify(object)}</Typography>
                         ))}

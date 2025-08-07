@@ -24,7 +24,9 @@ function ItineraryListItem({ itinerary }) {
 
   return (
     <CardContent sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      <Tooltip title={itinerary.owner_id === user.id ? "Edit Itinerary" : "View Itinerary"} placement="right">
+      <Tooltip title={itinerary.owner_id === user.id
+          ? "Edit Your Itinerary"
+          : "View " + itinerary.ownerName + "'s Itinerary"} placement="right">
         <Button
           variant="plain"
           color="soft"

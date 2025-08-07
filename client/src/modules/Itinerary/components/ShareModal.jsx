@@ -21,6 +21,7 @@ function ShareModal({ isOpen, onClose, onShare, userOptions }) {
                             Select a user to share this itinerary with.
                         </Typography>
                         <Autocomplete
+                            autoFocus={true}
                             options={userOptions}
                             getOptionLabel={(option) => option.userName}
                             onChange={(event, newValue) => {
