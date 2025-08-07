@@ -39,7 +39,7 @@ BEGIN
    FROM objects
    JOIN created 
       ON objects.id = created.object_id
-   JOIN artists
+   LEFT JOIN artists
       ON created.artist_id = artists.id
    LEFT JOIN images
       ON images.object_id = objects.id
@@ -69,5 +69,6 @@ BEGIN
       OR objects.region = region
    ) AND ( culture = -2 
       OR objects.culture = culture
-   ) LIMIT 20;
+   ) ORDER BY images.url DESC
+   LIMIT 20;
 END;
