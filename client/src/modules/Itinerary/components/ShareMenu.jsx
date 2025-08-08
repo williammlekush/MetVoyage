@@ -1,12 +1,11 @@
-import { CircularProgress, Dropdown, IconButton, ListItemDecorator, Menu, MenuButton, MenuItem, Tooltip } from "@mui/joy";
+import { Autocomplete, CircularProgress, Dropdown, IconButton, ListItemDecorator, Menu, MenuButton, MenuItem, Tooltip, Typography } from "@mui/joy";
 import { Add, Delete, Share } from "@mui/icons-material";
 import { useCallback, useEffect, useState } from "react";
 import { usePending } from "../../Shared/hooks/usePending";
 import { useFeedback } from "../../Shared/hooks/useFeedback";
-import ShareModal from "./ShareModal";
-import UnShareModal from "./UnShareModal";
 import { getUsersForItinerary, getUserOptions, shareItinerary, unShareItinerary } from "../api";
 import { useUser } from "../../Shared/hooks/useUser";
+import EasyModal from "../../Shared/components/EasyModal";
 
 function ShareMenu({itinerary}) {
 
@@ -23,9 +22,10 @@ function ShareMenu({itinerary}) {
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const [isUnShareModalOpen, setIsUnShareModalOpen] = useState(false);
     const [unShareUser, setUnShareUser] = useState();
+    const [shareUser, setShareUser] = useState();
 
-    const handleUnShareModalOpen = useCallback((user) => {
-        setUnShareUser(user);
+    const handleUnShareModalOpen = useCallback((userInput) => {
+        setUnShareUser(userInput);
         setIsUnShareModalOpen(true);
     }, []);
 
@@ -54,8 +54,8 @@ function ShareMenu({itinerary}) {
         setUserOptions(prev => [...prev, unShareUser].sort((a, b) => a.userName.localeCompare(b.userName))); //Add the deleted user back to available options
     }, [setSuccessMessage, unShareUser]);
 
-    const unShare = async (user) => {
-        await call(() => unShareItinerary(itinerary.id, user.userId))
+    const unShare = async () => {
+        await call(() => unShareItinerary(itinerary.id, unShareUser.userId))
             .then(() => handleUnShareSuccess())
             .catch(error => setErrorMessage("Failed to unshare itinerary: " + error.message));
     };
@@ -106,30 +106,65 @@ function ShareMenu({itinerary}) {
                     </Tooltip>
                     {isPending ? <CircularProgress size="lg" variant="plain" />
                         : users.length > 0 && (
-                            users.map((user) => (
-                                <Tooltip key={user.userId} title={`Un-Share with ${user.userName}`} placement="right">
-                                    <MenuItem key={user.userId} onClick={() => handleUnShareModalOpen(user)}>
+                            users.map((u) => (
+                                <Tooltip key={u.userId} title={`Un-Share with ${u.userName}`} placement="right">
+                                    <MenuItem key={u.userId} onClick={() => handleUnShareModalOpen(u)}>
                                         <ListItemDecorator>
                                             <Delete color="danger"/>
                                         </ListItemDecorator>
-                                        {user.userName}
+                                        {u.userName}
                                     </MenuItem>
                                 </Tooltip>
                             ))
                         )}
                 </Menu>
             </Dropdown>
-            <UnShareModal
+            <EasyModal 
+                title={"Un-Share Itinerary"}
+                body={
+                    <>
+                        {isPending
+                            ? <CircularProgress size="lg" variant="plain" />
+                            : <Typography>
+                                Are you sure you want to un-share this itinerary with {unShareUser?.userName}?
+                            </Typography>
+                        }
+                    </>
+                }
+                buttonText="Un-Share"
+                buttonProps={{
+                    variant: "solid",
+                    color: "danger",
+                }}
                 isOpen={isUnShareModalOpen}
                 onClose={() => handleUnShareModalClose()}
-                onUnShare={unShare}
-                user={unShareUser}
+                buttonAction={unShare}
             />
-            <ShareModal
+            <EasyModal 
+                title={"Share Itinerary"}
+                body={
+                    <>
+                        <Typography>
+                            Select a user to share this itinerary with.
+                        </Typography>
+                        <Autocomplete
+                            autoFocus={true}
+                            options={filteredUserOptions}
+                            getOptionLabel={(option) => option.userName}
+                            onChange={(event, newValue) => {
+                                setShareUser(newValue);
+                            }}
+                        />
+                    </>
+                }
+                buttonText="Share"
+                buttonProps={{
+                    variant: "solid",
+                    color: "primary",
+                }}
                 isOpen={isShareModalOpen}
                 onClose={() => setIsShareModalOpen(false)}
-                onShare={share}
-                userOptions={filteredUserOptions}
+                buttonAction={() => share(shareUser)}
             />
         </>
     );
