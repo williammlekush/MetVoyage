@@ -1,5 +1,4 @@
 import { Alert, Avatar, CircularProgress, Stack, Tooltip, Typography } from "@mui/joy";
-import { Person } from "@mui/icons-material";
 import { useEffect, useCallback, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useFeedback } from "../../Shared/hooks/useFeedback";
@@ -9,6 +8,7 @@ import { getItineraryById, getObjectsForItinerary } from "../api";
 import { formatDate } from "../../Shared/utils/stringHelpers";
 import Header from "../../Header/components/Header";
 import ShareMenu from "./ShareMenu";
+import DeleteMenu from "./DeleteMenu";
 
 function Itinerary() {
     // #region navigation/location
@@ -80,6 +80,12 @@ function Itinerary() {
                                 : <Tooltip title={"Owner: " + itinerary.ownerName} placement="right">
                                     <Avatar size="sm" />
                                 </Tooltip>}
+                            {isEditEnabled &&
+                                <DeleteMenu
+                                    itineraryId={itinerary.id}
+                                    refreshItinerary={loadItinerary}
+                                    clearDisabled={objects.length === 0}
+                                />}
                         </Stack>
                         {objects.length > 0 && objects.map((object) => (
                             <Typography key={object.id}>{JSON.stringify(object)}</Typography>
