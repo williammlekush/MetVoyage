@@ -1,11 +1,17 @@
-import { CardContent, Stack, Tooltip, Typography } from "@mui/joy";
-import { Face, Person } from "@mui/icons-material";
+import { Stack, Tooltip, Typography } from "@mui/joy";
+import { Face } from "@mui/icons-material";
 import { capitalize } from "../../Shared/utils/stringHelpers";
+import ArtistNameDisplay from "./ArtistNameDisplay";
 
-function ArtCardBasicInfo({ art, artist }) {
-  const artistCaption = capitalize(
-    (artist.artist_prefix ? artist.artist_prefix + " " : "") + artist.name
-  );
+function ArtCardBasicInfo({ art, artists }) {
+  const nameCaptions = artists
+    .filter((artist) => !!artist.name)
+    .map((artist) => ({
+      name: artist.name,
+      caption: capitalize(
+        (artist.artist_prefix ? artist.artist_prefix + " " : "") + artist.name
+      ),
+    }));
 
   return (
     <Stack
@@ -33,22 +39,18 @@ function ArtCardBasicInfo({ art, artist }) {
           {art.title ? art.title : "No title on record."}
         </Typography>
       </Tooltip>
-      <Tooltip title={artistCaption}>
-        <Typography
-          startDecorator={<Face sx={{ fontSize: "sm" }} />}
-          level="body-sm"
-          color="neutral"
-          sx={{
-            display: "-webkit-box",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            WebkitLineClamp: 1,
-            WebkitBoxOrient: "vertical",
-          }}
-        >
-          {artist.id ? artist.name : "No artist on record."}
-        </Typography>
-      </Tooltip>
+      {nameCaptions.length === 0 ? (
+        <ArtistNameDisplay
+          name={"No artist on record"}
+          sx={{ fontStyle: "italic", opacity: 0.6 }}
+        />
+      ) : (
+        nameCaptions.map((artist, index) => (
+          <Tooltip title={artist.caption}>
+            <ArtistNameDisplay key={index} name={artist.name} />
+          </Tooltip>
+        ))
+      )}
     </Stack>
   );
 }

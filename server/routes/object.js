@@ -221,30 +221,71 @@ ROUTER.get("/read/filteredObjects", (request, response) => {
           resultCallback: (result) => {
             const data = result[0];
             if (data) {
+              const params = data.map(({ id }) => id).join(",");
               runStoredProcedure({
                 procedure: "getObjectAggregateData",
-                parameters: [data.map(({ id }) => id).join(",")],
-                resultCallback: (aggData) => {
-                  let responseData = data;
+                parameters: [params],
+                resultCallback: (aggResult) => {
+                  const aggData = aggResult[0];
                   if (aggData) {
-                    responseData = data.map((obj) => ({
-                      ...obj,
-                      ...(aggData.find(
-                        (aggregateData) => aggregateData.id === obj.id
-                      ) || {}),
-                    }));
-                  }
+                    runStoredProcedure({
+                      procedure: "getImagesForObjects",
+                      parameters: [params],
+                      resultCallback: (imgsResult) => {
+                        const imgsData = imgsResult[0];
+                        if (imgsData) {
+                          runStoredProcedure({
+                            procedure: "getArtistsForObjects",
+                            parameters: [params],
+                            resultCallback: (artistsResult) => {
+                              const artistsData = artistsResult[0];
+                              if (artistsData) {
+                                let responseData = data.map((obj) => ({
+                                  ...obj,
+                                  ...(aggData.find(
+                                    (aggregateData) =>
+                                      aggregateData.id === obj.id
+                                  ) || {}),
+                                  images:
+                                    imgsData.find(
+                                      (imgData) => imgData.id === obj.id
+                                    ).images || [],
+                                  artists:
+                                    artistsData.find(
+                                      (artistData) => artistData.id === obj.id
+                                    ).artists || [],
+                                }));
 
-                  if (!resetCache) {
-                    const cachedSearchData = getCache(searchCacheKey);
-                    if (cachedSearchData) {
-                      responseData = [...cachedSearchData, ...responseData];
-                    }
-                  }
+                                if (!resetCache) {
+                                  const cachedSearchData =
+                                    getCache(searchCacheKey);
+                                  if (cachedSearchData) {
+                                    responseData = [
+                                      ...cachedSearchData,
+                                      ...responseData,
+                                    ];
+                                  }
+                                }
 
-                  setCache(searchCacheKey, responseData);
-                  response.status(200).json(responseData);
-                  resolve();
+                                setCache(searchCacheKey, responseData);
+                                response.status(200).json(responseData);
+                                resolve();
+                              } else {
+                                response.status(404).json("No artists found.");
+                                resolve();
+                              }
+                            },
+                          });
+                        } else {
+                          response.status(404).json("No images found.");
+                          resolve();
+                        }
+                      },
+                    });
+                  } else {
+                    response.status(404).json("Search returned no data.");
+                    resolve();
+                  }
                 },
               });
               resolve();

@@ -30,7 +30,7 @@ function ArtDetails({ art, artist }) {
   ];
 
   return (
-    <Tabs defaultValue={0}>
+    <Tabs defaultValue={0} sx={{ height: "100%" }}>
       <TabList>
         <Tab>Description</Tab>
         <Tab>Artist</Tab>
