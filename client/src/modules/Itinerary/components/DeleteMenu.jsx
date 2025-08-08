@@ -20,7 +20,6 @@ function DeleteMenu({itineraryId, refreshItinerary, clearDisabled}) {
     const [isClearModalOpen, setIsClearModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-    console.log(itineraryId);
 
     // #region API calls
     const handleClearItinerarySuccess = useCallback(() => {
