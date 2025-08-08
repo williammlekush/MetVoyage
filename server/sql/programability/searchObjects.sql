@@ -11,15 +11,40 @@ CREATE PROCEDURE searchObjects(
    IN city VARCHAR(16383),
    IN country VARCHAR(16383),
    IN region VARCHAR(16383),
-   IN culture VARCHAR(16383)
+   IN culture VARCHAR(16383),
+   IN limit_offset INT,
+   IN limit_count INT
 )
 BEGIN
-   SELECT * 
+   SELECT objects.id
+      ,objects.title
+      ,objects.medium
+      ,objects.name
+      ,objects.classification
+      ,objects.department
+      ,objects.period
+      ,objects.dynasty
+      ,objects.reign
+      ,objects.city
+      ,objects.country
+      ,objects.region
+      ,objects.culture
+      ,created.artist_id
+      ,artists.id AS artist_id
+      ,artists.name AS artist_name
+      ,artists.nationality AS artist_nationality
+      ,artists.begin_date AS artist_begin_date
+      ,artists.end_date AS artist_end_date
+      ,created.artist_prefix
+      ,images.url 
+      ,images.public_caption
    FROM objects
    JOIN created 
       ON objects.id = created.object_id
-   JOIN artists
+   LEFT JOIN artists
       ON created.artist_id = artists.id
+   LEFT JOIN images
+      ON images.object_id = objects.id
    WHERE (artist = -2 
       OR artists.name = artist
    ) AND ( title = -2  
@@ -46,5 +71,6 @@ BEGIN
       OR objects.region = region
    ) AND ( culture = -2 
       OR objects.culture = culture
-   ) LIMIT 20;
+   ) ORDER BY images.url DESC
+   LIMIT limit_offset, limit_count;
 END;

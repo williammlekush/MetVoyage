@@ -13,8 +13,8 @@ export default function SearchProvider({ children }) {
   const { setErrorMessage } = useFeedback();
 
   const search = useCallback(
-    async (searchFilters = filters) =>
-      call(async () => await searchObjects(searchFilters))
+    async ({ searchFilters = filters, resetCache = true }) =>
+      call(async () => await searchObjects(searchFilters, resetCache))
         .then((response) => setObjects(response.data))
         .catch((error) =>
           setErrorMessage(error?.response?.data ?? error.message)
@@ -26,7 +26,7 @@ export default function SearchProvider({ children }) {
     (newFilter) => {
       setFilters((prev) => {
         const updated = { ...prev, ...newFilter };
-        search(updated);
+        search({ searchFilters: updated });
         return updated;
       });
     },
