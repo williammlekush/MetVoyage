@@ -27,3 +27,6 @@ export const getUserOptions = () =>
 
 export const clearItinerary = (itineraryId) =>
   axios.post(`/api/itinerary/clear`, { itineraryId });
+
+export const deleteItinerary = (itineraryId) =>
+  axios.post(`/api/itinerary/delete`, { itineraryId });

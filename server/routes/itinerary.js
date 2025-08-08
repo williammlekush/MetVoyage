@@ -67,4 +67,12 @@ ROUTER.post("/clear", (request, response) => {
   });
 });
 
+ROUTER.post("/delete", (request, response) => {
+  runStoredProcedure({
+    procedure: "deleteItinerary",
+    parameters: [request.body.itineraryId],
+    resultCallback: (result) => response.status(200).json(result),
+  });
+});
+
 export default ROUTER;
