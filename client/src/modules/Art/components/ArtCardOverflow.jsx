@@ -1,18 +1,23 @@
 import { CardOverflow } from "@mui/joy";
 import ArtImageLoader from "./ArtImageLoader";
 
-function ArtCardOverflow({ art, isArtLoading, ButtonComponent }) {
+function ArtCardOverflow({
+  images,
+  selectedIndex,
+  isArtLoading,
+  ButtonComponent,
+}) {
   return (
     <CardOverflow sx={{ p: 0 }}>
       <ArtImageLoader
         src={
           !isArtLoading
-            ? art.url
-              ? art.url
+            ? images[selectedIndex].url
+              ? images[selectedIndex].url
               : "https://placehold.co/400x300?text=No+image+on+record"
             : undefined
         }
-        alt={art.publicCaption}
+        alt={images[selectedIndex].caption}
       />
       {ButtonComponent ? <ButtonComponent /> : null}
     </CardOverflow>

@@ -170,9 +170,10 @@ const createStoredProcedures = () => {
 const dropTables = () => {
   // Disable foreign key checks to delete all tables
   queryDb(() => query({ query: "SET FOREIGN_KEY_CHECKS = 0" }));
-  Object.values(Table).forEach((table) =>
-    queryDb(() => query({ query: "DROP TABLE IF EXISTS " + table }))
-  );
+  Object.values(Table).forEach((table) => {
+    if (table === Table.CANVIEW) table = "can_view";
+    queryDb(() => query({ query: "DROP TABLE IF EXISTS " + table }));
+  });
   // Re-enable foreign key checks
   queryDb(() => query({ query: "SET FOREIGN_KEY_CHECKS = 1" }));
 };

@@ -49,8 +49,6 @@ export default function List() {
               id: object.id,
               title: object.title,
               artist: object.artist,
-              url: object.url,
-              publicCaption: object.public_caption,
               date: object.date,
               medium: object.medium,
               dimensions: object.dimensions,
@@ -68,17 +66,16 @@ export default function List() {
               itineraryCount: object.itinerary_count,
             };
 
-            const artist = {
-              id: object.artist_id,
-              name: object.artist_name,
-              nationality: object.artist_nationality,
-              begin_date: object.artist_begin_date,
-              end_date: object.artist_end_date,
-              artist_prefix: object.artist_prefix,
-            };
+            const images = object.images;
+            const artists = object.artists;
 
             return (
-              <ArtCard art={art} artist={artist} isPending={searchIsPending} />
+              <ArtCard
+                art={art}
+                images={images}
+                artists={artists}
+                isPending={searchIsPending}
+              />
             );
           })
         ) : searchIsPending ? (

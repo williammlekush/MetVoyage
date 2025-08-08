@@ -16,7 +16,8 @@ CREATE PROCEDURE searchObjects(
    IN limit_count INT
 )
 BEGIN
-   SELECT objects.id
+   SELECT DISTINCT
+      objects.id
       ,objects.title
       ,objects.medium
       ,objects.name
@@ -29,25 +30,11 @@ BEGIN
       ,objects.country
       ,objects.region
       ,objects.culture
-      ,created.artist_id
-      ,artists.id AS artist_id
-      ,artists.name AS artist_name
-      ,artists.nationality AS artist_nationality
-      ,artists.begin_date AS artist_begin_date
-      ,artists.end_date AS artist_end_date
-      ,created.artist_prefix
-      ,images.url 
-      ,images.public_caption
+      ,objects.credit_line
+      ,objects.number
+      ,objects.date
    FROM objects
-   JOIN created 
-      ON objects.id = created.object_id
-   LEFT JOIN artists
-      ON created.artist_id = artists.id
-   LEFT JOIN images
-      ON images.object_id = objects.id
-   WHERE (artist = -2 
-      OR artists.name = artist
-   ) AND ( title = -2  
+   WHERE ( title = -2  
       OR objects.title = title
    ) AND ( medium = -2 
       OR objects.medium = medium
@@ -71,6 +58,6 @@ BEGIN
       OR objects.region = region
    ) AND ( culture = -2 
       OR objects.culture = culture
-   ) ORDER BY images.url DESC
+   ) ORDER BY objects.number DESC
    LIMIT limit_offset, limit_count;
 END;

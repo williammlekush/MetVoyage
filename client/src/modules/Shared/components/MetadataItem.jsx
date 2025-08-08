@@ -7,8 +7,15 @@ function MetadataItem({ label, value }) {
         <Typography level="body-xs">{label}:</Typography>
       </Grid>
       <Grid xs={7}>
-        <Typography level="body-xs" color="neutral">
-          {value ? value : "No data available."}
+        <Typography
+          level="body-xs"
+          color="neutral"
+          sx={{
+            fontStyle: value ? "normal" : "italic",
+            opacity: value ? 1 : 0.6,
+          }}
+        >
+          {value ? value : "No data"}
         </Typography>
       </Grid>
     </Grid>
