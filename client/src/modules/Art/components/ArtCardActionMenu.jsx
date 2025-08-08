@@ -15,9 +15,9 @@ import { useFeedback } from "../../Shared/hooks/useFeedback";
 import { useUser } from "../../Shared/hooks/useUser";
 
 function ArtCardActionMenu({ art }) {
-  const { id: userId, favorite } = useUser();
+  const { user } = useUser();
   // #region state
-  const isFavoriteDisabled = favorite === art.id;
+  const isFavoriteDisabled = user.favorite === art.id;
 
   const [itineraryLookups, setItineraryLookups] = useState([]);
 
@@ -31,7 +31,7 @@ function ArtCardActionMenu({ art }) {
 
   const favoriteArt = useCallback(async () => {
     await axios
-      .post("/api/object/favorite", { id: userId, objectId: art.id })
+      .post("/api/object/favorite", { id: user.id, objectId: art.id })
       .then((response) => {
         if (response.status === 200 && response.data[0][0].affected_rows > 0) {
           setSuccessMessage("Art favorited successfully.");
@@ -40,19 +40,19 @@ function ArtCardActionMenu({ art }) {
         }
       })
       .catch((error) => setErrorMessage(error));
-  }, [art.id, userId, setErrorMessage, setSuccessMessage]);
+  }, [art.id, user.id, setErrorMessage, setSuccessMessage]);
   // #endregion
 
   const handleAddToItinerary = useCallback(async () => {
     handleOpenModal();
-    await getItineraries(userId, art.id)
+    await getItineraries(user.id, art.id)
       .then((response) => {
         if (response.status === 200) {
           setItineraryLookups(response.data[0]);
         }
       })
       .catch((error) => setErrorMessage(error));
-  }, [art.id, setErrorMessage, userId]);
+  }, [art.id, setErrorMessage, user.id]);
 
   return (
     <>
