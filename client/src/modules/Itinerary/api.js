@@ -24,3 +24,6 @@ export const shareItinerary = (itineraryId, userId) =>
 
 export const getUserOptions = () =>
   axios.get(`/api/user/read/userOptions`);
+
+export const clearItinerary = (itineraryId) =>
+  axios.post(`/api/itinerary/clear`, { itineraryId });

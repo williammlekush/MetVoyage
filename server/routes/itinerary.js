@@ -59,4 +59,12 @@ ROUTER.get("/read/users", (request, response) => {
   });
 });
 
+ROUTER.post("/clear", (request, response) => {
+  runStoredProcedure({
+    procedure: "clearItinerary",
+    parameters: [request.body.itineraryId],
+    resultCallback: (result) => response.status(200).json(result),
+  });
+});
+
 export default ROUTER;
