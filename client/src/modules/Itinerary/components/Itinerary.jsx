@@ -9,6 +9,7 @@ import { formatDate } from "../../Shared/utils/stringHelpers";
 import Header from "../../Header/components/Header";
 import ShareMenu from "./ShareMenu";
 import DeleteMenu from "./DeleteMenu";
+import ItineraryForm from "./ItineraryForm";
 
 function Itinerary() {
     // #region navigation/location
@@ -33,7 +34,7 @@ function Itinerary() {
     // #region API calls
     const loadObjects = useCallback(async (itineraryId) => {
         await call(() => getObjectsForItinerary(itineraryId))
-            .then((response) => setObjects(response.data[0]))
+            .then((response) => setObjects(response.data))
             .catch((error) => setErrorMessage("Failed to load objects: " + error.message));
     }, [call, setErrorMessage]);
 
@@ -71,7 +72,7 @@ function Itinerary() {
             <>
                 {itinerary ? (
                     <>
-                        <Stack direction="row" justifyContent="center" alignItems="center" spacing={2} sx={{ mt: 2 }}> 
+                        <Stack direction="row" justifyContent="center" alignItems="center" spacing={2} sx={{ mt: 2, mb: 2 }}> 
                             <Typography level="h2" color={isEditEnabled ? "primary" : "inherit"} sx={{ textAlign: 'center', mt: 4 }}>
                                 {formatDate(itinerary.date)}
                             </Typography>
@@ -87,9 +88,7 @@ function Itinerary() {
                                     clearDisabled={objects.length === 0}
                                 />}
                         </Stack>
-                        {objects.length > 0 && objects.map((object) => (
-                            <Typography key={object.id}>{JSON.stringify(object)}</Typography>
-                        ))}
+                        <ItineraryForm objects={objects} />
                     </>
                 ) : (
                     <Alert color="danger">{AlertText}</Alert>

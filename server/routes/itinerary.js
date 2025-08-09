@@ -43,14 +43,6 @@ ROUTER.get("/read", (request, response) => {
   });
 });
 
-ROUTER.get("/read/objects", (request, response) => {
-  runStoredProcedure({
-    procedure: "getObjectsForItinerary",
-    parameters: [request.query.itineraryId],
-    resultCallback: (result) => response.status(200).json(result),
-  });
-});
-
 ROUTER.get("/read/users", (request, response) => {
   runStoredProcedure({
     procedure: "getUsersForItinerary",
@@ -72,6 +64,70 @@ ROUTER.post("/delete", (request, response) => {
     procedure: "deleteItinerary",
     parameters: [request.body.itineraryId],
     resultCallback: (result) => response.status(200).json(result),
+  });
+});
+
+ROUTER.get("/read/objects", (request, response) => {
+  runStoredProcedure({
+    procedure: "getObjectsForItinerary",
+    parameters: [request.query.itineraryId],
+    resultCallback: (result) => {
+      const data = result[0];
+      if (data) {
+        const params = data.map(({ id }) => id).join(",");
+        runStoredProcedure({
+          procedure: "getObjectAggregateData",
+          parameters: [params],
+          resultCallback: (aggResult) => {
+            const aggData = aggResult[0];
+            if (aggData) {
+              runStoredProcedure({
+                procedure: "getImagesForObjects",
+                parameters: [params],
+                resultCallback: (imgsResult) => {
+                  const imgsData = imgsResult[0];
+                  if (imgsData) {
+                    runStoredProcedure({
+                      procedure: "getArtistsForObjects",
+                      parameters: [params],
+                      resultCallback: (artistsResult) => {
+                        const artistsData = artistsResult[0];
+                        if (artistsData) {
+                          let responseData = data.map((obj) => ({
+                            ...obj,
+                            ...(aggData.find(
+                              (aggregateData) =>
+                                aggregateData.id === obj.id
+                            ) || {}),
+                            images:
+                              imgsData.find(
+                                (imgData) => imgData.id === obj.id
+                              ).images || [],
+                            artists:
+                              artistsData.find(
+                                (artistData) => artistData.id === obj.id
+                              ).artists || [],
+                          }));
+                          response.status(200).json(responseData);
+                        } else {
+                          response.status(404).json("No artists found.");
+                        }
+                      },
+                    });
+                  } else {
+                    response.status(404).json("No images found.");
+                  }
+                },
+              });
+            } else {
+              response.status(404).json("Itinerary returned no object data.");
+            }
+          },
+        });
+      } else {
+        response.status(404).json("Itinerary returned no object data.");
+      }
+    },
   });
 });
 
