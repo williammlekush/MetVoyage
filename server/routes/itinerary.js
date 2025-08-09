@@ -131,4 +131,12 @@ ROUTER.get("/read/objects", (request, response) => {
   });
 });
 
+ROUTER.post("/save", (request, response) => {
+  runStoredProcedure({
+    procedure: "saveItinerary",
+    parameters: [request.body.itineraryId, JSON.stringify(request.body.objects)],
+    resultCallback: ((result) => response.status(200).json(result)),
+  });
+});
+
 export default ROUTER;

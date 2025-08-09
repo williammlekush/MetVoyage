@@ -3,5 +3,6 @@ BEGIN
     SELECT Objects.*
     FROM Includes
     LEFT JOIN Objects ON Includes.object_id = Objects.id
-    WHERE Includes.itinerary_id = itineraryId;
+    WHERE Includes.itinerary_id = itineraryId
+    ORDER BY Includes.`order`;
 END;
