@@ -71,6 +71,7 @@ export default function List() {
 
             return (
               <ArtCard
+                key={art.id}
                 art={art}
                 images={images}
                 artists={artists}
