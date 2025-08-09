@@ -27,17 +27,19 @@ function ArtCardFooter({ art, expanded, setExpanded }) {
                 >
                     {art.itineraryCount || 0}
                 </Typography>
-                <IconButton
-                    aria-label="Artist Info"
-                    title="Artist Info"
-                    onClick={() => setExpanded(!expanded)}
-                    size="md"
-                    variant="soft"
-                    color="neutral"
-                    sx={{ position: 'absolute', bottom: 3, right: 3, zIndex: 10 }}
-                >
-                    {expanded ? <KeyboardDoubleArrowLeft /> : <KeyboardDoubleArrowRight />}
-                </IconButton>
+                {expanded !== undefined &&
+                    <IconButton
+                        aria-label="Artist Info"
+                        title="Artist Info"
+                        onClick={() => setExpanded(!expanded)}
+                        size="md"
+                        variant="soft"
+                        color="neutral"
+                        sx={{ position: 'absolute', bottom: 3, right: 3, zIndex: 10 }}
+                    >
+                        {expanded ? <KeyboardDoubleArrowLeft /> : <KeyboardDoubleArrowRight />}
+                    </IconButton>
+                }
             </CardContent>
         </CardOverflow>
     )
