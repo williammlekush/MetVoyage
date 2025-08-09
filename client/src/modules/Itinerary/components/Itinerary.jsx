@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 import { useFeedback } from "../../Shared/hooks/useFeedback";
 import { usePending } from "../../Shared/hooks/usePending";
 import { useUser } from "../../Shared/hooks/useUser";
-import { getItineraryById, getObjectsForItinerary } from "../api";
+import { getItineraryById, getObjectsForItinerary, saveItinerary } from "../api";
 import { formatDate } from "../../Shared/utils/stringHelpers";
 import Header from "../../Header/components/Header";
 import ShareMenu from "./ShareMenu";
@@ -23,10 +23,10 @@ function Itinerary() {
 
     const [itinerary, setItinerary] = useState();
     const [objects, setObjects] = useState([]);
-    const isEditEnabled = itinerary?.owner_id === user.id;
+    const isEditEnabled = itinerary?.owner_id === user.id && !itinerary.isPast;
 
     const { call, isPending } = usePending();
-    const { setErrorMessage } = useFeedback();
+    const { setErrorMessage, setSuccessMessage } = useFeedback();
 
     const AlertText = "Itinerary not found: either the record does not exist, or you do not have permission to view the itinerary."
     // #endregion
@@ -35,7 +35,7 @@ function Itinerary() {
     const loadObjects = useCallback(async (itineraryId) => {
         await call(() => getObjectsForItinerary(itineraryId))
             .then((response) => setObjects(response.data))
-            .catch((error) => setErrorMessage("Failed to load objects: " + error.message));
+            .catch((error) => setErrorMessage("Failed to load objects: " + error.response.data));
     }, [call, setErrorMessage]);
 
     const onItineraryLoadSuccess = useCallback((data) => {
@@ -49,8 +49,19 @@ function Itinerary() {
     const loadItinerary = useCallback(async (id) => {
         await call(() => getItineraryById(id, user.id))
             .then((response) => onItineraryLoadSuccess(response.data[0][0]))
-            .catch((error) => setErrorMessage("Failed to load itinerary: " + error.message));
+            .catch((error) => setErrorMessage("Failed to load itinerary: " + error.response.data));
     }, [call, onItineraryLoadSuccess, setErrorMessage, user.id]);
+
+    const handleSaveSuccess = useCallback(() => {
+        setSuccessMessage("Itinerary saved successfully.");
+        loadItinerary(itinerary.id);
+    }, [setSuccessMessage, loadItinerary, itinerary]);
+
+    const handleSave = useCallback(async (data) => {
+        await call(() => saveItinerary(itinerary.id, data))
+            .then(handleSaveSuccess)
+            .catch((error) => setErrorMessage("Failed to save itinerary: " + error.message));
+    }, [call, handleSaveSuccess, setErrorMessage, itinerary]);
     // #endregion
 
     // #region useEffects
@@ -88,7 +99,9 @@ function Itinerary() {
                                     clearDisabled={objects.length === 0}
                                 />}
                         </Stack>
-                        <ItineraryForm objects={objects} />
+                        { objects.length > 0 &&
+                            <ItineraryForm objects={objects} isEditEnabled={isEditEnabled} handleSave={handleSave} />
+                        } 
                     </>
                 ) : (
                     <Alert color="danger">{AlertText}</Alert>

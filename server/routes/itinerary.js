@@ -73,7 +73,7 @@ ROUTER.get("/read/objects", (request, response) => {
     parameters: [request.query.itineraryId],
     resultCallback: (result) => {
       const data = result[0];
-      if (data) {
+      if (data.length > 0) {
         const params = data.map(({ id }) => id).join(",");
         runStoredProcedure({
           procedure: "getObjectAggregateData",

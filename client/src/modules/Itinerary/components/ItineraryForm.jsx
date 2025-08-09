@@ -1,34 +1,71 @@
-import { Button } from "@mui/joy";
-import { useFeedback } from "../../Shared/hooks/useFeedback";
+import { Box, Button, IconButton } from "@mui/joy";
+import { ArrowDropUp, ArrowDropDown, Close } from "@mui/icons-material";
+import { useForm, useFieldArray } from "react-hook-form";
 import ArtCardMini from "../../Art/components/ArtCardMini";
 
-function ItineraryForm( { objects } ) {
+function ItineraryForm( { objects, isEditEnabled, handleSave } ) {
 
-    const { setSuccessMessage } = useFeedback();
+    const { control, handleSubmit } = useForm(
+            {defaultValues: { obj: objects.map(object => ({ ...object, isExpanded: false }))
+        }});
+
+    const {fields, remove, move, update } = useFieldArray({
+        control,
+        name: "obj",
+    });
+
+    const toggleExpand = (index) => {
+        update(index, { ...fields[index], isExpanded: !fields[index].isExpanded });
+    };
 
     return (
-        <>
-            {objects.length > 0 && objects.map((object) => (
+        <form onSubmit={handleSubmit(data => handleSave(data.obj.map(o => (o.id))))}>
+            {fields.length > 0 && fields.map((field, index) => (
                 <ArtCardMini
-                    key={object.id}
-                    object={object}
-                    actionChild={
-                        <Button
-                            variant="soft"
-                            color="neutral"
-                            onClick={() => setSuccessMessage("TODO: Real Actions")}
-                        >
-                            Actions
-                        </Button>
-                    }
+                    key={index}
+                    object={field}
+                    toggleExpanded={() => toggleExpand(index)}
+                    actionChild={isEditEnabled && (
+                        <Box sx={{ display: "flex", direction: "row", alignItems: "center", gap: 1 }}>
+                            <IconButton
+                                variant="solid"
+                                color="neutral"
+                                onClick={() => move(index, index - 1)}
+                                disabled={index === 0}
+                            >
+                                <ArrowDropUp />
+                            </IconButton>
+                            <IconButton
+                                variant="solid"
+                                color="neutral"
+                                onClick={() => move(index, index + 1)}
+                                disabled={index === fields.length - 1}
+                            >
+                                <ArrowDropDown />
+                            </IconButton>
+                            <IconButton
+                                variant="soft"
+                                color="danger"
+                                onClick={() => remove(index)}
+                            >
+                                <Close />
+                            </IconButton>
+                        </Box>
+                    )} 
                 />
             ))}
-            <Button
-                variant="solid"
-                color="primary"
-                onClick={() => setSuccessMessage("TODO: Actually Save Itinerary")}
-            >Save</Button>
-        </>
+            {isEditEnabled && 
+                <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+                    <Button
+                        variant="solid"
+                        color="primary"
+                        type="submit"
+                    >
+                        Save
+                    </Button>
+                </Box>
+            }
+        </form>
     );
 };
 
