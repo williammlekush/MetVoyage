@@ -39,8 +39,8 @@ export default function ArtCard({ art, images, artists, isPending }) {
             <ArtCardImageSelector
               key={art.id}
               images={images}
-              selectedIndex={selectedImgIndex}
-              setSelectedIndex={setSelectedImageIndex}
+              selectedImgIndex={selectedImgIndex}
+              setSelectedImageIndex={setSelectedImageIndex}
             />
           )}
           <ArtCardBasicInfo art={art} artist={artists[0]} artists={artists} />
