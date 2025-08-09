@@ -1,4 +1,4 @@
-import { Box, Card, CardContent, Stack, Tooltip, Typography } from "@mui/joy"
+import { Box, Card, Stack, Tooltip, Typography } from "@mui/joy"
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import { useState } from "react";
 import ArtCardOverflow from "./ArtCardOverflow";
