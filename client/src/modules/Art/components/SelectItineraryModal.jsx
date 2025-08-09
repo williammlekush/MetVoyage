@@ -94,6 +94,7 @@ function SelectItineraryModal({
         height: 200,
         backgroundColor: "background.paper",
         border: "2px solid #000",
+        borderRadius: "12px",
         p: 4,
       }}
     >
