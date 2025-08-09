@@ -6,7 +6,7 @@ import ArtCardMini from "../../Art/components/ArtCardMini";
 function ItineraryForm( { objects, isEditEnabled, handleSave } ) {
 
     const { control, handleSubmit } = useForm(
-            {defaultValues: { obj: objects.map(object => ({ ...object, isExpanded: false }))
+            {defaultValues: { obj: objects.map(object => ({ ...object, objectId: object.id, isExpanded: false }))
         }});
 
     const {fields, remove, move, update } = useFieldArray({
@@ -19,7 +19,7 @@ function ItineraryForm( { objects, isEditEnabled, handleSave } ) {
     };
 
     return (
-        <form onSubmit={handleSubmit(data => handleSave(data.obj.map(o => (o.id))))}>
+        <form onSubmit={handleSubmit(data => handleSave(data.obj.map(o => (o.objectId))))}>
             {fields.length > 0 && fields.map((field, index) => (
                 <ArtCardMini
                     key={index}

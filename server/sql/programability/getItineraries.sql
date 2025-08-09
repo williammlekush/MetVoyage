@@ -9,6 +9,6 @@ BEGIN
     INNER JOIN Users ON Users.id = Itineraries.owner_id
     LEFT JOIN Includes ON Includes.itinerary_id = Itineraries.id
         AND Includes.object_Id = objectId
-    WHERE Users.id = userId
+    WHERE Users.id = userId AND Itineraries.date > NOW()
     ORDER BY Itineraries.date;
 END;
