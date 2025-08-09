@@ -26,7 +26,7 @@ function SelectItineraryModal({
   handleCloseModal,
 }) {
   // #region state
-  const { id: userId } = useUser();
+  const { user } = useUser();
   const filter = createFilterOptions();
   const [value, setValue] = useState();
   // #endregion
@@ -44,7 +44,7 @@ function SelectItineraryModal({
       // Handle adding to itinerary
       if (value.id === 0) {
         // Create new itinerary for the selected date
-        createItinerary(userId, value.date)
+        createItinerary(user.id, value.date)
           .then((response) => {
             if (response.status === 200) {
               const newItinerary = response.data[0][0];
