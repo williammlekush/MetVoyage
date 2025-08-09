@@ -4,7 +4,6 @@ import {
   Button,
   Card,
   CardContent,
-  CardOverflow,
   Divider,
   Stack,
 } from "@mui/joy";
@@ -13,7 +12,6 @@ import ArtCardFooter from "./ArtCardFooter";
 import ArtCardOverflow from "./ArtCardOverflow";
 import ArtDetails from "./ArtDetails";
 import ArtCardActionMenu from "./ArtCardActionMenu";
-import { Circle } from "@mui/icons-material";
 
 export default function ArtCard({ art, images, artists, isPending }) {
   const [expanded, setExpanded] = useState(false);
