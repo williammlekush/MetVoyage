@@ -1,37 +1,19 @@
 import { Button, Card, CardContent, CardOverflow, CircularProgress, Divider } from '@mui/joy';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useUser } from "../../Shared/hooks/useUser";
-import { usePending } from "../../Shared/hooks/usePending";
-import { useFeedback } from "../../Shared/hooks/useFeedback";
-import { getItinerariesForUser } from '../api';
+import { useItinerary } from '../../Shared/hooks/useItinerary';
 import ItineraryListItem from './ItineraryListItem';
 
 function ItineraryList() {
     const [expanded, setExpanded] = useState(false);
     const { user } = useUser();
-    const { call, isPending } = usePending();
-    const { setErrorMessage } = useFeedback();
 
-    const [itineraries, setItineraries] = useState([]);
+    const { itineraries, loadItineraries, areItinerariesPending } = useItinerary();
 
     const isEmpty = itineraries.length === 0;
     const pastTrips = itineraries.filter(itinerary => itinerary.isPast);
     const upcomingTrips = itineraries.filter(itinerary => !itinerary.isPast);
-    
-    const onSuccess = useCallback((data) => {
-        setItineraries(data);
-    }, [setItineraries]);
-
-    const loadItineraries = async () => {
-        await call(() => getItinerariesForUser(user.id))
-            .then((response) => {
-                onSuccess(response.data[0]);
-            })
-            .catch((error) => {
-                setErrorMessage("Failed to load itineraries: " + error.message);
-            });
-    };
     
     useEffect(() => {
         if (user.id) {
@@ -58,7 +40,7 @@ function ItineraryList() {
                     Upcoming Trips:
                 </Button>
             </CardOverflow>
-            {isPending ? <CircularProgress sx={{ m: 2 }} /> : 
+            {areItinerariesPending ? <CircularProgress sx={{ m: 2 }} /> : 
                 <CardContent>
                     {upcomingTrips.length > 0 ?
                         <ItineraryListItem itinerary={upcomingTrips[0]} />
