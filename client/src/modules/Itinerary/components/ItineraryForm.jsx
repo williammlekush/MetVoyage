@@ -3,7 +3,7 @@ import { ArrowDropUp, ArrowDropDown, Close } from "@mui/icons-material";
 import { useForm, useFieldArray } from "react-hook-form";
 import ArtCardMini from "../../Art/components/ArtCardMini";
 
-function ItineraryForm( { objects, isEditEnabled, handleSave } ) {
+function ItineraryForm({ objects, isEditEnabled, handleSave }) {
 
     const { control, handleSubmit } = useForm(
             {defaultValues: { obj: objects.map(object => ({ ...object, objectId: object.id, isExpanded: false }))
