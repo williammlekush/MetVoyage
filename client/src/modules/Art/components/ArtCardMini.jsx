@@ -42,7 +42,7 @@ function ArtCardMini ({object, actionChild, toggleExpanded}) {
                                 />
                             }
                         </Card>
-                        <Box sx={{ ml: 2}}>
+                        <Box sx={{ ml: 2, width: "100%"}}>
                             <ArtDetails art={object} artist={object.artists[0]} />
                         </Box>
                     </Box>
