@@ -3,8 +3,8 @@ import { createRoot } from "react-dom/client";
 import Router from "./Router.jsx";
 import { CssBaseline, CssVarsProvider, Sheet } from "@mui/joy";
 import UserProvider from "./modules/Shared/components/UserProvider.jsx";
-import { Feedback } from "@mui/icons-material";
 import FeedbackProvider from "./modules/Shared/components/FeedbackProvider.jsx";
+import ItineraryProvider from "./modules/Shared/components/ItineraryProvider.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -24,7 +24,9 @@ createRoot(document.getElementById("root")).render(
       >
         <UserProvider>
           <FeedbackProvider>
-            <Router />
+            <ItineraryProvider>
+              <Router />
+            </ItineraryProvider>
           </FeedbackProvider>
         </UserProvider>
       </Sheet>

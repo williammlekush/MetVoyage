@@ -46,8 +46,8 @@ function ArtCardBasicInfo({ art, artists }) {
         />
       ) : (
         nameCaptions.map((artist, index) => (
-          <Tooltip title={artist.caption}>
-            <ArtistNameDisplay key={index} name={artist.name} />
+          <Tooltip title={artist.caption} key={index}>
+            <ArtistNameDisplay name={artist.name} />
           </Tooltip>
         ))
       )}

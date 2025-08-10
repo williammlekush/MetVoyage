@@ -30,3 +30,6 @@ export const clearItinerary = (itineraryId) =>
 
 export const deleteItinerary = (itineraryId) =>
   axios.post(`/api/itinerary/delete`, { itineraryId });
+
+export const saveItinerary = (itineraryId, objects) =>
+  axios.post(`/api/itinerary/save`, { itineraryId, objects });

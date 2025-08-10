@@ -1,19 +1,15 @@
 import { useState } from "react";
 import {
   Box,
-  Button,
   Card,
-  CardContent,
-  CardOverflow,
   Divider,
-  Stack,
 } from "@mui/joy";
 import ArtCardBasicInfo from "./ArtCardBasicInfo";
 import ArtCardFooter from "./ArtCardFooter";
 import ArtCardOverflow from "./ArtCardOverflow";
 import ArtDetails from "./ArtDetails";
 import ArtCardActionMenu from "./ArtCardActionMenu";
-import { Circle } from "@mui/icons-material";
+import ArtCardImageSelector from "./ArtCardImageSelector";
 
 export default function ArtCard({ art, images, artists, isPending }) {
   const [expanded, setExpanded] = useState(false);
@@ -40,37 +36,12 @@ export default function ArtCard({ art, images, artists, isPending }) {
             ButtonComponent={() => <ArtCardActionMenu art={art} />}
           />
           {images.length > 1 && (
-            <CardContent
-              sx={{
-                position: "absolute",
-                top: "5%",
-                left: "50%",
-                transform: "translateX(-50%)",
-              }}
-            >
-              <Stack direction="row" spacing={1}>
-                {images.map((image, index) => (
-                  <Button
-                    key={index}
-                    color="primary"
-                    variant="soft"
-                    sx={{
-                      width: 12,
-                      height: 12,
-                      padding: 0,
-                      paddingBlock: 0,
-                      paddingInline: 0,
-                      minHeight: 0,
-                      bgcolor:
-                        index === selectedImgIndex ? "#4393E4" : "aliceblue",
-                      borderRadius: "100%",
-                      boxShadow: "0 0 2px 1px grey",
-                    }}
-                    onClick={() => setSelectedImageIndex(index)}
-                  />
-                ))}
-              </Stack>
-            </CardContent>
+            <ArtCardImageSelector
+              key={art.id}
+              images={images}
+              selectedImgIndex={selectedImgIndex}
+              setSelectedImageIndex={setSelectedImageIndex}
+            />
           )}
           <ArtCardBasicInfo art={art} artist={artists[0]} artists={artists} />
         </Box>

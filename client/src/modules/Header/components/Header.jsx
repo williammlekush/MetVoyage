@@ -1,12 +1,30 @@
-import { Avatar, Button, Stack, Typography } from "@mui/joy";
+import { Box, Stack } from "@mui/joy";
+import { useCallback } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import Logo from "../../Shared/components/Logo";
 import DisplayName from "./DisplayName";
-import UserAvatar from "./UserAvatar";
+import HeaderMenu from "./HeaderMenu";
 
 export default function Header() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const isOverviewPage = location.pathname === "/Overview";
+  const handleLogoClick = useCallback(() => {
+    navigate("/Overview");
+  }, [navigate]);
+
   return (
     <Stack direction="row" justifyContent="space-between" alignItems="center">
-      <Logo />
+      {isOverviewPage
+        ? <Logo />
+        : <Box
+            onClick={handleLogoClick}
+            sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}
+          >
+            <Logo />
+          </Box>
+      }
       <Stack
         direction="row"
         justifyContent="flex-end"
@@ -14,7 +32,7 @@ export default function Header() {
         alignItems="center"
       >
         <DisplayName />
-        <UserAvatar />
+        <HeaderMenu />
       </Stack>
     </Stack>
   );

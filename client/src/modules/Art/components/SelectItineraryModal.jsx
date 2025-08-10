@@ -18,6 +18,7 @@ import { createItinerary } from "../../Itinerary/api";
 import { addToItinerary } from "../api";
 import { useFeedback } from "../../Shared/hooks/useFeedback";
 import { useUser } from "../../Shared/hooks/useUser";
+import { useItinerary } from "../../Shared/hooks/useItinerary";
 
 function SelectItineraryModal({
   art,
@@ -26,6 +27,7 @@ function SelectItineraryModal({
   handleCloseModal,
 }) {
   // #region state
+  const { loadItineraries } = useItinerary();
   const { user } = useUser();
   const filter = createFilterOptions();
   const [value, setValue] = useState();
@@ -49,6 +51,7 @@ function SelectItineraryModal({
             if (response.status === 200) {
               const newItinerary = response.data[0][0];
               // Add art to the new itinerary
+              loadItineraries(); // Refresh itineraries
               addToItinerary(art.id, newItinerary.id)
                 .then((response) => {
                   if (response.status === 200) {
@@ -94,6 +97,7 @@ function SelectItineraryModal({
         height: 200,
         backgroundColor: "background.paper",
         border: "2px solid #000",
+        borderRadius: "12px",
         p: 4,
       }}
     >
