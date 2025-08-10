@@ -22,7 +22,7 @@ function ItineraryForm({ objects, isEditEnabled, handleSave }) {
         <form onSubmit={handleSubmit(data => handleSave(data.obj.map(o => (o.objectId))))}>
             {fields.length > 0 && fields.map((field, index) => (
                 <ArtCardMini
-                    key={index}
+                    key={field.objectId}
                     object={field}
                     toggleExpanded={() => toggleExpand(index)}
                     actionChild={isEditEnabled && (
