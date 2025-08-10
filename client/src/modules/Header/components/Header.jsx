@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Logo from "../../Shared/components/Logo";
 import DisplayName from "./DisplayName";
-import UserAvatar from "./UserAvatar";
+import HeaderMenu from "./HeaderMenu";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ export default function Header() {
         alignItems="center"
       >
         <DisplayName />
-        <UserAvatar />
+        <HeaderMenu />
       </Stack>
     </Stack>
   );
