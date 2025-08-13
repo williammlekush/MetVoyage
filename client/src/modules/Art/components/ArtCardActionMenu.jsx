@@ -45,7 +45,7 @@ function ArtCardActionMenu({ art }) {
         }
       })
       .catch((error) => setErrorMessage(error));
-  }, [art.id, user.id, setErrorMessage, setSuccessMessage]);
+  }, [art.id, user, setErrorMessage, setUser, setSuccessMessage]);
   // #endregion
 
   const handleAddToItinerary = useCallback(async () => {
