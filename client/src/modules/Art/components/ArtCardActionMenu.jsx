@@ -33,11 +33,12 @@ function ArtCardActionMenu({ art }) {
     await axios
       .post("/api/object/favorite", { id: user.id, objectId: art.id })
       .then((response) => {
-        if (response.status === 200 && response.data[0][0].affected_rows > 0) {
+        console.log(response.data);
+        if (response.status === 200 && response.data[0][0]?.affected_rows > 0) {
           setSuccessMessage("Art favorited successfully.");
           console.log(response.data);
-          if (response.data[0][0]?.url) {
-            setUser({ ...user, favorite: response.data[0][0].url });
+          if (response.data[1][0]?.url) {
+            setUser({ ...user, favorite: response.data[1][0].url });
           }
         } else {
           setErrorMessage("Art not favorited :-(");
