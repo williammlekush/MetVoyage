@@ -6,5 +6,5 @@ BEGIN
     WHERE id = userId;
     
     -- Optional: Return affected rows count
-    SELECT ROW_COUNT() AS affected_rows;
+    SELECT ROW_COUNT() AS affected_rows, `url` FROM Images WHERE object_id = favoriteId LIMIT 1;
 END;

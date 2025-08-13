@@ -15,7 +15,7 @@ import { useFeedback } from "../../Shared/hooks/useFeedback";
 import { useUser } from "../../Shared/hooks/useUser";
 
 function ArtCardActionMenu({ art }) {
-  const { user } = useUser();
+  const { user, setUser } = useUser();
   // #region state
   const isFavoriteDisabled = user.favorite === art.id;
 
@@ -35,6 +35,10 @@ function ArtCardActionMenu({ art }) {
       .then((response) => {
         if (response.status === 200 && response.data[0][0].affected_rows > 0) {
           setSuccessMessage("Art favorited successfully.");
+          console.log(response.data);
+          if (response.data[0][0]?.url) {
+            setUser({ ...user, favorite: response.data[0][0].url });
+          }
         } else {
           setErrorMessage("Art not favorited :-(");
         }
