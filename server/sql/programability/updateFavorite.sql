@@ -7,4 +7,5 @@ BEGIN
     
     -- Optional: Return affected rows count
     SELECT ROW_COUNT() AS affected_rows;
+    SELECT `url` FROM Images WHERE object_id = favoriteId LIMIT 1;
 END;
