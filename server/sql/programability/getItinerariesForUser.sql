@@ -1,6 +1,6 @@
 CREATE PROCEDURE getItinerariesForUser(IN userId INT)
 BEGIN
-    SELECT Itineraries.id,
+    SELECT DISTINCT Itineraries.id,
         Itineraries.date,
         Itineraries.owner_id,
         COALESCE(NULLIF(Users.display_name, ''), Users.user_name) AS ownerName,
