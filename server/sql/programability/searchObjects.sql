@@ -16,6 +16,11 @@ CREATE PROCEDURE searchObjects(
    IN limit_count INT
 )
 BEGIN
+SET @sqlArtist = '
+   LEFT JOIN created ON objects.id = created.object_id
+   LEFT JOIN artists ON created.artist_id = artists.id';
+SET @sqlArtistWhere = CONCAT(' AND ( artists.name = ''', artist, ''' )');
+SET @sql = CONCAT('
    SELECT DISTINCT
       objects.id
       ,objects.title
@@ -33,31 +38,37 @@ BEGIN
       ,objects.credit_line
       ,objects.number
       ,objects.date
-   FROM objects
-   WHERE ( title = -2  
-      OR objects.title = title
-   ) AND ( medium = -2 
-      OR objects.medium = medium
-   ) AND ( name = -2 
-      OR objects.name = name
-   ) AND ( classification = -2 
-      OR objects.classification = classification
-   ) AND ( department = -2 
-      OR objects.department = department
-   ) AND ( period = -2 
-      OR objects.period = period
-   ) AND ( dynasty = -2 
-      OR objects.dynasty = dynasty
-   ) AND ( reign = -2 
-      OR objects.reign = reign
-   ) AND ( city = -2 
-      OR objects.city = city
-   ) AND ( country = -2 
-      OR objects.country = country
-   ) AND ( region = -2 
-      OR objects.region = region
-   ) AND ( culture = -2 
-      OR objects.culture = culture
-   ) ORDER BY objects.number DESC
-   LIMIT limit_offset, limit_count;
+   FROM objects',
+   IF(artist <> -2, CONCAT(' ', @sqlArtist), ''),
+   ' WHERE ( ''', title, ''' = ''-2''  
+      OR objects.title = ''', title, ''' )',
+   IF(artist <> -2, CONCAT(' ', @sqlArtistWhere), ''),
+   ' AND ( ''', medium, ''' = ''-2'' 
+      OR objects.medium = ''', medium, '''',
+   ') AND ( ''', name, ''' = ''-2'' 
+      OR objects.name = ''', name, '''',
+   ') AND ( ''', classification, ''' = ''-2'' 
+      OR objects.classification = ''', classification, '''',
+   ') AND ( ''', department, ''' = ''-2'' 
+      OR objects.department = ''', department, '''',
+   ') AND ( ''', period, ''' = ''-2'' 
+      OR objects.period = ''', period, '''',
+   ') AND ( ''', dynasty, ''' = ''-2'' 
+      OR objects.dynasty = ''', dynasty, '''',
+   ') AND ( ''', reign, ''' = ''-2'' 
+      OR objects.reign = ''', reign, '''',
+   ') AND ( ''', city, ''' = ''-2'' 
+      OR objects.city = ''', city, '''',
+   ') AND ( ''', country, ''' = ''-2'' 
+      OR objects.country = ''', country, '''',
+   ') AND ( ''', region, ''' = ''-2'' 
+      OR objects.region = ''', region, '''',
+   ') AND ( ''', culture, ''' = ''-2'' 
+      OR objects.culture = ''', culture, '''',
+   ') ORDER BY objects.number DESC
+   LIMIT ', limit_offset, ', ', limit_count, ';');
+   
+   PREPARE stmt FROM @sql;
+   EXECUTE stmt;
+   DEALLOCATE PREPARE stmt;
 END;
