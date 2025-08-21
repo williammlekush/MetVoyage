@@ -98,6 +98,18 @@ export const parseMetObjects = () =>
       .pipe(csv())
       .on("data", (row) => {
         row.is_highlight = row.is_highlight === "true" ? 1 : 0;
+
+        // For classifications delimited by | or -, just take the first part
+        if (row.classification) {
+          row.classification = String(row.classification).split(/[|\-]/)[0];
+        }
+        // For country, region, and city delimited by |, just take the first part
+        ["country", "city", "region"].forEach((key) => {
+          if (row[key]) {
+            row[key] = String(row[key]).split("|")[0];
+          }
+        });
+
         objects.push(mapRow(objectMap, row));
 
         const splitRow = {};
