@@ -103,6 +103,14 @@ export const parseMetObjects = () =>
         if (row.classification) {
           row.classification = String(row.classification).split(/[|\-]/)[0];
         }
+        //For country and city, just take the first part if delimited by |
+        if (row.country) {
+          row.country = String(row.country).split("|")[0];
+        }
+        if (row.city) {
+          row.city = String(row.city).split("|")[0];
+        }
+
         objects.push(mapRow(objectMap, row));
 
         const splitRow = {};
